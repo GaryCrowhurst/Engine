@@ -1698,15 +1698,21 @@
                     
                     <div class="interactive-area">
                         <h3>Activity: Lubrication Flow Simulation</h3>
-                        <div class="animation-container">
-                            <div class="lube-animation" id="lubeAnimation">
-                                <!-- Animation will be rendered here by JS -->
-                            </div>
+                        <div class="animation-container" style="height: auto;">
+                            <!-- Using GIF instead of JS animation -->
+                            <img src="https://1.bp.blogspot.com/-5XYYMAZ3tek/V6NhbWCN2II/AAAAAAAA8M0/0QWERZ7CtmwLTd1ys7ukqXx9FH5J6g4uACLcB/s1600/giphy.gif" alt="Engine lubrication system" style="width: 100%; max-width: 500px; display: block; margin: 0 auto;">
                         </div>
-                        <div class="controls">
-                            <button class="btn" id="startLubeAnimation">Start Animation</button>
-                            <button class="btn" id="pauseLubeAnimation">Pause</button>
-                            <button class="btn" id="resetLubeAnimation">Reset</button>
+                        <div class="system-description" style="margin-top: 20px; background-color: #f5f5f5; padding: 15px; border-radius: 5px;">
+                            <h4>Lubrication System Components</h4>
+                            <p>The engine lubrication system shown above includes:</p>
+                            <ul>
+                                <li><strong>Oil Pump:</strong> Circulates oil throughout the engine</li>
+                                <li><strong>Oil Filter:</strong> Removes contaminants from the oil</li>
+                                <li><strong>Oil Galleries:</strong> Passages that distribute oil to bearings and other components</li>
+                                <li><strong>Pressure Relief Valve:</strong> Prevents excessive oil pressure</li>
+                                <li><strong>Oil Pan (Sump):</strong> Collection area for oil when it returns from bearings</li>
+                            </ul>
+                            <p>In motorsport engines, dry sump systems are often used to prevent oil starvation during high-G cornering.</p>
                         </div>
                     </div>
                     
@@ -1794,15 +1800,21 @@
                     
                     <div class="interactive-area">
                         <h3>Activity: Cooling Flow Simulation</h3>
-                        <div class="animation-container">
-                            <div class="cooling-animation" id="coolingAnimation">
-                                <!-- Animation will be rendered here by JS -->
-                            </div>
+                        <div class="animation-container" style="height: auto;">
+                            <!-- Using GIF instead of JS animation -->
+                            <img src="https://i.makeagif.com/media/9-10-2020/6sQM1y.gif" alt="Engine cooling system" style="width: 100%; max-width: 500px; display: block; margin: 0 auto;">
                         </div>
-                        <div class="controls">
-                            <button class="btn" id="startCoolingAnimation">Start Animation</button>
-                            <button class="btn" id="pauseCoolingAnimation">Pause</button>
-                            <button class="btn" id="resetCoolingAnimation">Reset</button>
+                        <div class="system-description" style="margin-top: 20px; background-color: #f5f5f5; padding: 15px; border-radius: 5px;">
+                            <h4>Cooling System Operation</h4>
+                            <p>The engine cooling system shown above includes:</p>
+                            <ul>
+                                <li><strong>Radiator:</strong> Transfers heat from the coolant to the air</li>
+                                <li><strong>Water Pump:</strong> Circulates coolant through the engine</li>
+                                <li><strong>Thermostat:</strong> Regulates coolant flow based on temperature</li>
+                                <li><strong>Water Jacket:</strong> Passages in the engine block and head where coolant flows</li>
+                                <li><strong>Expansion Tank:</strong> Provides space for coolant expansion and a reserve</li>
+                            </ul>
+                            <p>In motorsport applications, cooling systems are carefully designed to maintain optimal operating temperatures under extreme conditions.</p>
                         </div>
                     </div>
                     
@@ -3015,9 +3027,16 @@
         function startLubeAnimation() {
             if (lubeAnimationRunning) return;
             
-            lubeAnimationRunning = true;
+            // Get elements and check if they exist
             const oilPaths = document.querySelectorAll('.oil-path');
             const oilGallery = document.querySelector('.oil-gallery');
+            
+            if (!oilPaths.length || !oilGallery) {
+                console.error('Lubrication animation: Some elements were not found in the DOM');
+                return;
+            }
+            
+            lubeAnimationRunning = true;
             
             // Reset animation
             resetLubeAnimation();
@@ -3029,7 +3048,7 @@
             lubeAnimationInterval = setInterval(() => {
                 switch(step) {
                     case 0: // Oil pump draws oil from pan
-                        if (index < 3) {
+                        if (index < 3 && index < oilPaths.length) {
                             oilPaths[index].style.opacity = '1';
                             oilPaths[index].classList.add('flowing');
                             index++;
@@ -3039,7 +3058,7 @@
                         }
                         break;
                     case 1: // Oil flows through filter to main gallery
-                        if (index < 5) {
+                        if (index < 5 && index < oilPaths.length) {
                             oilPaths[index].style.opacity = '1';
                             oilPaths[index].classList.add('flowing');
                             oilPaths[index].classList.add('pressurized');
@@ -3050,7 +3069,7 @@
                         }
                         break;
                     case 2: // Oil flows to bearings
-                        if (index < 7) {
+                        if (index < 7 && index < oilPaths.length) {
                             oilPaths[index].style.opacity = '1';
                             oilPaths[index].classList.add('flowing');
                             oilPaths[index].classList.add('pressurized');
@@ -3060,7 +3079,7 @@
                         }
                         break;
                     case 3: // Oil returns to pan
-                        if (index < 9) {
+                        if (index < 9 && index < oilPaths.length) {
                             oilPaths[index].style.opacity = '1';
                             oilPaths[index].classList.add('flowing');
                             index++;
@@ -3069,7 +3088,7 @@
                         }
                         break;
                     case 4: // Pressure relief valve path
-                        if (index < 12) {
+                        if (index < 12 && index < oilPaths.length) {
                             oilPaths[index].style.opacity = '1';
                             oilPaths[index].classList.add('flowing');
                             index++;
@@ -3098,6 +3117,10 @@
             const oilPaths = document.querySelectorAll('.oil-path');
             const oilGallery = document.querySelector('.oil-gallery');
             
+            if (!oilPaths.length || !oilGallery) {
+                return; // Exit if elements don't exist
+            }
+            
             oilPaths.forEach(path => {
                 path.style.opacity = '0';
                 path.classList.remove('flowing');
@@ -3117,6 +3140,13 @@
             const tankLabel = document.querySelector('.tank-label');
             const scavengeLabel = document.querySelector('.scavenge-label');
             
+            // Check if elements exist
+            if (!systemType || !oilPan || !oilLevel || !drySumpTank || 
+                !scavengePump || !tankLabel || !scavengeLabel) {
+                console.error('Toggle sump system: Some elements were not found in the DOM');
+                return;
+            }
+            
             if (systemType.textContent === 'Wet Sump System') {
                 // Switch to dry sump
                 systemType.textContent = 'Dry Sump System';
@@ -3129,21 +3159,23 @@
                 
                 // Add scavenge pump oil path
                 const container = document.getElementById('lubeAnimation');
-                const scavengePath1 = document.createElement('div');
-                scavengePath1.className = 'oil-path';
-                scavengePath1.style.width = '60px';
-                scavengePath1.style.height = '5px';
-                scavengePath1.style.bottom = '50px';
-                scavengePath1.style.right = '120px';
-                container.appendChild(scavengePath1);
-                
-                const scavengePath2 = document.createElement('div');
-                scavengePath2.className = 'oil-path';
-                scavengePath2.style.width = '5px';
-                scavengePath2.style.height = '30px';
-                scavengePath2.style.bottom = '50px';
-                scavengePath2.style.right = '65px';
-                container.appendChild(scavengePath2);
+                if (container) {
+                    const scavengePath1 = document.createElement('div');
+                    scavengePath1.className = 'oil-path';
+                    scavengePath1.style.width = '60px';
+                    scavengePath1.style.height = '5px';
+                    scavengePath1.style.bottom = '50px';
+                    scavengePath1.style.right = '120px';
+                    container.appendChild(scavengePath1);
+                    
+                    const scavengePath2 = document.createElement('div');
+                    scavengePath2.className = 'oil-path';
+                    scavengePath2.style.width = '5px';
+                    scavengePath2.style.height = '30px';
+                    scavengePath2.style.bottom = '50px';
+                    scavengePath2.style.right = '65px';
+                    container.appendChild(scavengePath2);
+                }
             } else {
                 // Switch to wet sump
                 systemType.textContent = 'Wet Sump System';
@@ -3187,11 +3219,11 @@
         
         let coolingAnimationRunning = false;
         let coolingAnimationInterval;
-        let coolingRotateInterval;
         let thermostatOpen = false;
         
         function startCoolingAnimation() {
             if (coolingAnimationRunning) return;
+            
             coolingAnimationRunning = true;
             const coolingPaths = document.querySelectorAll('.cooling-path');
             const fanBlades = document.querySelectorAll('.fan-blade');
@@ -3200,23 +3232,34 @@
             const thermostatValve = document.querySelector('.thermostat-valve');
             const gaugeNeedle = document.querySelector('.gauge-needle');
             const tempIndicator = document.querySelector('.temp-indicator');
+            
+            // Reset animation
             resetCoolingAnimation();
+            
+            // Start animation sequence
             let index = 0;
             let step = 0;
             let engineTemp = 0;
             let fanRotation = 0;
             let pumpRotation = 0;
-            coolingRotateInterval = setInterval(() => {
+            
+            // Rotate fan and pump continuously
+            const rotateInterval = setInterval(() => {
                 fanRotation += 10;
                 pumpRotation += 15;
+                
                 fanBlades.forEach((blade, i) => {
                     blade.style.transform = `rotate(${fanRotation + (i * 45)}deg)`;
                 });
+                
                 impellerBlades.forEach((blade, i) => {
                     blade.style.transform = `rotate(${pumpRotation + (i * 90)}deg)`;
                 });
-                const needleRotation = -60 + (engineTemp * 120);
+                
+                // Update gauge based on engine temperature
+                const needleRotation = -60 + (engineTemp * 120); // -60 to 60 degrees
                 gaugeNeedle.style.transform = `rotate(${needleRotation}deg)`;
+                
                 if (engineTemp < 0.25) {
                     tempIndicator.textContent = 'Cold';
                     tempIndicator.style.color = '#77adff';
@@ -3227,6 +3270,8 @@
                     tempIndicator.textContent = 'Hot';
                     tempIndicator.style.color = '#c83232';
                 }
+                
+                // Open/close thermostat based on temperature
                 if (engineTemp > 0.5 && !thermostatOpen) {
                     thermostatOpen = true;
                     thermostat.style.backgroundColor = '#ff7777';
@@ -3237,11 +3282,16 @@
                     thermostatValve.style.transform = 'rotate(0deg)';
                 }
             }, 100);
+            
             coolingAnimationInterval = setInterval(() => {
                 switch(step) {
-                    case 0:
+                    case 0: // Engine warming up, bypass flow
                         if (index < 16) {
-                            if (index === 8) engineTemp = 0.4;
+                            if (index === 8) {
+                                engineTemp = 0.4; // Engine warming up
+                            }
+                            
+                            // Skip main radiator flow when thermostat closed
                             if (index >= 3 && index <= 6 && !thermostatOpen) {
                                 index = 7;
                             } else {
@@ -3251,8 +3301,10 @@
                             }
                         } else {
                             step++;
+                            // Start heating engine more
                             engineTemp = 0.6;
                             setTimeout(() => {
+                                // Once thermostat opens, show flow through radiator
                                 if (index >= 3 && thermostatOpen) {
                                     for (let i = 3; i <= 6; i++) {
                                         coolingPaths[i].style.opacity = '1';
@@ -3262,33 +3314,46 @@
                             }, 1000);
                         }
                         break;
-                    case 1:
+                    case 1: // Engine at normal temperature
                         engineTemp = 0.65;
+                        // Keep animation running
                         break;
                 }
             }, 400);
+            
+            // Clean up on page exit
+            return () => {
+                clearInterval(coolingAnimationInterval);
+                clearInterval(rotateInterval);
+            };
         }
-
+        
         function pauseCoolingAnimation() {
-            if (coolingAnimationInterval) clearInterval(coolingAnimationInterval);
-            if (coolingRotateInterval) clearInterval(coolingRotateInterval);
-            coolingAnimationRunning = false;
+            if (coolingAnimationInterval) {
+                clearInterval(coolingAnimationInterval);
+                coolingAnimationRunning = false;
+            }
         }
-
+        
         function resetCoolingAnimation() {
-            if (coolingAnimationInterval) clearInterval(coolingAnimationInterval);
-            if (coolingRotateInterval) clearInterval(coolingRotateInterval);
+            if (coolingAnimationInterval) {
+                clearInterval(coolingAnimationInterval);
+            }
+            
             coolingAnimationRunning = false;
             thermostatOpen = false;
+            
             const coolingPaths = document.querySelectorAll('.cooling-path');
             const thermostat = document.querySelector('.thermostat');
             const thermostatValve = document.querySelector('.thermostat-valve');
             const gaugeNeedle = document.querySelector('.gauge-needle');
             const tempIndicator = document.querySelector('.temp-indicator');
+            
             coolingPaths.forEach(path => {
                 path.style.opacity = '0';
                 path.classList.remove('flowing');
             });
+            
             thermostat.style.backgroundColor = '#c83232';
             thermostatValve.style.transform = 'rotate(0deg)';
             gaugeNeedle.style.transform = 'rotate(-60deg)';
@@ -3297,10 +3362,36 @@
         }
         
         // Four-stroke animation controls
+        const strokeBtns = document.querySelectorAll('.stroke-btn');
         let animationRunning = false;
         let animationInterval;
-
+        
+        strokeBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const stroke = this.getAttribute('data-stroke');
+                
+                // Remove active class from all stroke buttons
+                strokeBtns.forEach(b => b.classList.remove('active'));
+                
+                // Add active class to this button
+                this.classList.add('active');
+                
+                if (stroke === 'play') {
+                    if (!animationRunning) {
+                        animateFourStrokeCycle();
+                    }
+                } else {
+                    if (animationRunning) {
+                        clearInterval(animationInterval);
+                        animationRunning = false;
+                    }
+                    showStroke(stroke);
+                }
+            });
+        });
+        
         function showStroke(stroke) {
+            // Safety check - get all elements and verify they exist
             const piston = document.querySelector('.piston');
             const connectingRod = document.querySelector('.connecting-rod');
             const crankArm = document.querySelector('.crank-arm');
@@ -3314,6 +3405,15 @@
             const exhaustGas = document.querySelector('.exhaust-gas');
             const currentStrokeDisplay = document.querySelector('.current-stroke');
             const crankAngleDisplay = document.querySelector('.crank-angle');
+            const strokeInfo = document.getElementById('strokeInfo');
+            
+            // Safety check - only proceed if all elements are found
+            if (!piston || !connectingRod || !crankArm || !crankshaft || !flywheel || 
+                !spark || !intakeValve || !exhaustValve || !mixture || !combustion || 
+                !exhaustGas || !currentStrokeDisplay || !crankAngleDisplay || !strokeInfo) {
+                console.error('Four-stroke animation: Some elements were not found in the DOM');
+                return;
+            }
             
             // Reset all values
             spark.style.opacity = '0';
@@ -3340,7 +3440,6 @@
                 crankAngleDisplay.textContent = '180°';
                 
                 // Update stroke info
-                const strokeInfo = document.getElementById('strokeInfo');
                 strokeInfo.innerHTML = `
                     <h3>Intake Stroke</h3>
                     <p>The piston moves downward in the cylinder, creating a vacuum. The intake valve opens, allowing the air-fuel mixture to be drawn into the cylinder.</p>
@@ -3372,7 +3471,6 @@
                 crankAngleDisplay.textContent = '360°';
                 
                 // Update stroke info
-                const strokeInfo = document.getElementById('strokeInfo');
                 strokeInfo.innerHTML = `
                     <h3>Compression Stroke</h3>
                     <p>The piston moves upward with both valves closed, compressing the air-fuel mixture. This increases the pressure and temperature of the mixture for more efficient combustion.</p>
@@ -3405,7 +3503,6 @@
                 crankAngleDisplay.textContent = '540°';
                 
                 // Update stroke info
-                const strokeInfo = document.getElementById('strokeInfo');
                 strokeInfo.innerHTML = `
                     <h3>Power Stroke</h3>
                     <p>The compressed air-fuel mixture is ignited by the spark plug. The resulting explosion forces the piston downward, generating power that is transmitted to the crankshaft.</p>
@@ -3438,7 +3535,6 @@
                 crankAngleDisplay.textContent = '720°/0°';
                 
                 // Update stroke info
-                const strokeInfo = document.getElementById('strokeInfo');
                 strokeInfo.innerHTML = `
                     <h3>Exhaust Stroke</h3>
                     <p>The piston moves upward again, with the exhaust valve open. This pushes the spent combustion gases out of the cylinder, preparing it for the next intake stroke.</p>
@@ -3457,10 +3553,14 @@
         
         function animateFourStrokeCycle() {
             if (animationRunning) return;
+            
             animationRunning = true;
             const strokes = ['intake', 'compression', 'power', 'exhaust'];
             let currentStrokeIndex = 0;
+            
+            // Start the animation cycle
             showStroke(strokes[currentStrokeIndex]);
+            
             animationInterval = setInterval(() => {
                 currentStrokeIndex = (currentStrokeIndex + 1) % strokes.length;
                 showStroke(strokes[currentStrokeIndex]);
