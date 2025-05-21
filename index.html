@@ -1,0 +1,3533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motorsport Engine Systems - Interactive Learning</title>
+    <style>
+        :root {
+            --primary: #e63946;
+            --secondary: #1d3557;
+            --light: #f1faee;
+            --mid: #a8dadc;
+            --dark: #457b9d;
+            --success: #2a9d8f;
+            --warning: #e9c46a;
+            --danger: #e76f51;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light);
+            color: var(--secondary);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background-color: var(--secondary);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 100;
+        }
+        
+        header h1 {
+            text-align: center;
+            color: white;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: var(--mid);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .progress-container {
+            background-color: var(--dark);
+            height: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .tab-nav {
+            display: flex;
+            justify-content: center;
+            background-color: var(--dark);
+            padding: 10px 0;
+            flex-wrap: wrap;
+        }
+        
+        .tab-btn {
+            background-color: transparent;
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            margin: 0 5px;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-btn:hover {
+            background-color: rgba(255,255,255,0.2);
+        }
+        
+        .tab-btn.active {
+            background-color: var(--primary);
+        }
+        
+        main {
+            min-height: calc(100vh - 200px);
+            padding: 20px 0;
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            background-color: var(--secondary);
+            color: white;
+            padding: 15px;
+            font-weight: bold;
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+        
+        .interactive-area {
+            background-color: var(--mid);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .drag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .drag-item {
+            background-color: var(--dark);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: move;
+            user-select: none;
+            transition: all 0.3s ease;
+        }
+        
+        .drag-item.dragging {
+            opacity: 0.5;
+        }
+        
+        .drop-zone {
+            min-height: 100px;
+            border: 2px dashed var(--dark);
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: rgba(255,255,255,0.7);
+        }
+        
+        .drop-zone.highlight {
+            background-color: rgba(168, 218, 220, 0.5);
+        }
+        
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .question {
+            margin-bottom: 20px;
+        }
+        
+        .options {
+            list-style-type: none;
+        }
+        
+        .option {
+            background-color: white;
+            border: 1px solid var(--dark);
+            border-radius: 5px;
+            padding: 10px;
+            margin: 5px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .option:hover {
+            background-color: var(--mid);
+        }
+        
+        .option.selected {
+            background-color: var(--dark);
+            color: white;
+        }
+        
+        .option.correct {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .option.wrong {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin: 10px 0;
+        }
+        
+        .btn:hover {
+            background-color: #c1121f;
+        }
+        
+        .btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        .feedback {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .feedback.success {
+            background-color: rgba(42, 157, 143, 0.2);
+            color: var(--success);
+        }
+        
+        .feedback.error {
+            background-color: rgba(231, 111, 81, 0.2);
+            color: var(--danger);
+        }
+        
+        .drag-component {
+            padding: 10px;
+            background-color: var(--dark);
+            color: white;
+            border-radius: 5px;
+            margin: 5px;
+            cursor: move;
+            display: inline-block;
+        }
+        
+        .engine-diagram {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            display: block;
+        }
+        
+        .hotspot {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .hotspot:hover {
+            transform: scale(1.2);
+        }
+        
+        .component-info {
+            display: none;
+            position: absolute;
+            background-color: white;
+            border: 1px solid var(--dark);
+            border-radius: 5px;
+            padding: 10px;
+            width: 250px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+        
+        .matching-activity {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .matching-item {
+            flex: 1 0 45%;
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .matching-item select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid var(--dark);
+            margin-top: 10px;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .comparison-table th, .comparison-table td {
+            border: 1px solid var(--dark);
+            padding: 10px;
+            text-align: left;
+        }
+        
+        .comparison-table th {
+            background-color: var(--dark);
+            color: white;
+        }
+        
+        .comparison-table tr:nth-child(even) {
+            background-color: rgba(168, 218, 220, 0.3);
+        }
+        
+        footer {
+            background-color: var(--secondary);
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
+        }
+        
+        .badge-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        .badge {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #cccccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .badge.earned {
+            background-color: var(--success);
+        }
+        
+        .animation-container {
+            height: 300px;
+            position: relative;
+            border: 1px solid var(--dark);
+            overflow: hidden;
+            margin: 20px 0;
+            background-color: white;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .tab-nav {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .tab-btn {
+                margin: 5px 0;
+                width: 90%;
+            }
+            
+            .matching-activity {
+                flex-direction: column;
+            }
+            
+            .matching-item {
+                flex: 1 0 100%;
+            }
+        }
+        
+        /* Engine animation specific styles */
+        .engine-animation {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        
+        .cylinder {
+            width: 120px;
+            height: 220px;
+            background-color: #d3d3d3;
+            position: relative;
+            border-radius: 10px 10px 0 0;
+            overflow: visible;
+            border: 2px solid #555;
+        }
+        
+        .cylinder-head {
+            width: 140px;
+            height: 40px;
+            background-color: #888;
+            position: absolute;
+            top: -40px;
+            left: -10px;
+            border-radius: 5px 5px 0 0;
+            border: 2px solid #555;
+        }
+        
+        .valve {
+            width: 20px;
+            height: 10px;
+            background-color: #333;
+            position: absolute;
+            top: -20px;
+            border-radius: 2px;
+            transition: transform 0.3s ease;
+        }
+        
+        .intake-valve {
+            left: 25px;
+        }
+        
+        .exhaust-valve {
+            right: 25px;
+        }
+        
+        .valve-open {
+            transform: translateY(-10px);
+        }
+        
+        .intake-port {
+            width: 20px;
+            height: 30px;
+            background-color: #555;
+            position: absolute;
+            top: -40px;
+            left: 25px;
+            border-radius: 5px 5px 0 0;
+        }
+        
+        .exhaust-port {
+            width: 20px;
+            height: 30px;
+            background-color: #c83232;
+            position: absolute;
+            top: -40px;
+            right: 25px;
+            border-radius: 5px 5px 0 0;
+        }
+        
+        .piston {
+            width: 110px;
+            height: 40px;
+            background-color: #505050;
+            position: absolute;
+            left: 5px;
+            border-radius: 5px;
+            transition: top 0.3s ease;
+            z-index: 2;
+        }
+        
+        .piston-rings {
+            width: 110px;
+            height: 6px;
+            background: repeating-linear-gradient(
+                to bottom,
+                #444,
+                #444 2px,
+                #333 2px,
+                #333 4px
+            );
+            position: absolute;
+            left: 0;
+            top: 5px;
+        }
+        
+        .connecting-rod {
+            width: 12px;
+            height: 120px;
+            background-color: #777;
+            position: absolute;
+            left: 54px;
+            transform-origin: center bottom;
+            transition: all 0.3s ease;
+            z-index: 1;
+            border-radius: 5px;
+        }
+        
+        .crankshaft {
+            width: 30px;
+            height: 30px;
+            background-color: #333;
+            border-radius: 50%;
+            position: absolute;
+            bottom: -115px;
+            left: 45px;
+            transition: transform 0.3s ease;
+            z-index: 3;
+        }
+        
+        .crank-arm {
+            width: 15px;
+            height: 50px;
+            background-color: #444;
+            position: absolute;
+            bottom: -95px;
+            left: 53px;
+            transform-origin: center bottom;
+            transition: transform 0.3s ease;
+        }
+        
+        .crankshaft-journal {
+            width: 20px;
+            height: 20px;
+            background-color: #555;
+            border-radius: 50%;
+            position: absolute;
+            bottom: -50px;
+            left: 50px;
+            z-index: 3;
+        }
+        
+        .flywheel {
+            width: 80px;
+            height: 80px;
+            background-color: #333;
+            border-radius: 50%;
+            position: absolute;
+            bottom: -140px;
+            left: 20px;
+            transition: transform 0.3s ease;
+            border: 5px solid #222;
+        }
+        
+        .spark {
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle, rgba(255,236,72,1) 0%, rgba(230,57,70,1) 100%);
+            border-radius: 50%;
+            position: absolute;
+            top: 5px;
+            left: 45px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            box-shadow: 0 0 10px #ffec48;
+            z-index: 10;
+        }
+        
+        .spark-plug {
+            width: 15px;
+            height: 30px;
+            background-color: #999;
+            position: absolute;
+            top: -30px;
+            left: 52px;
+            z-index: 5;
+        }
+        
+        .combustion-chamber {
+            width: 100px;
+            height: 30px;
+            background-color: transparent;
+            position: absolute;
+            top: 0;
+            left: 10px;
+        }
+        
+        /* Fuel and air mixture */
+        .mixture {
+            position: absolute;
+            width: 100%;
+            height: 0;
+            bottom: 40px;
+            background-color: rgba(200, 230, 255, 0.3);
+            transition: height 0.5s ease, background-color 0.5s ease;
+        }
+        
+        .combustion {
+            position: absolute;
+            width: 100%;
+            height: 0;
+            top: 0;
+            background-color: rgba(255, 100, 100, 0.5);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .exhaust-gas {
+            position: absolute;
+            width: 100%;
+            height: 0;
+            top: 0;
+            background-color: rgba(100, 100, 100, 0.5);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .status-indicator {
+            position: absolute;
+            top: -70px;
+            right: -150px;
+            width: 150px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .current-stroke {
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .crank-angle {
+            font-style: italic;
+        }
+        
+        /* Lubrication animation specific styles */
+        .lube-animation {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background-color: #f0f0f0;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+        }
+        
+        .engine-block {
+            position: absolute;
+            width: 250px;
+            height: 180px;
+            left: 50%;
+            top: 50px;
+            transform: translateX(-50%);
+            background-color: #777;
+            border-radius: 5px;
+            z-index: 1;
+        }
+        
+        .oil-pump {
+            width: 60px;
+            height: 40px;
+            background-color: #555;
+            border-radius: 5px;
+            position: absolute;
+            bottom: 20px;
+            left: 40px;
+            z-index: 2;
+            border: 2px solid #333;
+        }
+        
+        .oil-pump-label {
+            position: absolute;
+            bottom: 0;
+            left: 40px;
+            font-size: 12px;
+            color: #333;
+            font-weight: bold;
+        }
+        
+        .oil-path {
+            position: absolute;
+            background-color: rgba(153, 101, 21, 0.7);
+            opacity: 0;
+            transition: opacity 0.5s ease, background-color 0.5s ease;
+            z-index: 3;
+            border-radius: 3px;
+        }
+        
+        .oil-path.pressurized {
+            background-color: rgba(153, 101, 21, 0.9);
+        }
+        
+        .oil-path.flowing {
+            animation: flowPulse 1s infinite;
+        }
+        
+        @keyframes flowPulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+        
+        .oil-filter {
+            width: 40px;
+            height: 60px;
+            background-color: #ddd;
+            border: 2px solid #777;
+            border-radius: 5px;
+            position: absolute;
+            top: 40px;
+            left: 40px;
+            z-index: 2;
+        }
+        
+        .oil-filter-label {
+            position: absolute;
+            top: 30px;
+            left: 40px;
+            font-size: 12px;
+            color: #333;
+            font-weight: bold;
+            width: 40px;
+            text-align: center;
+        }
+        
+        .oil-gallery {
+            position: absolute;
+            background-color: rgba(153, 101, 21, 0.2);
+            border: 1px solid #996515;
+            opacity: 0;
+            z-index: 2;
+            border-radius: 3px;
+        }
+        
+        .oil-pan {
+            width: 280px;
+            height: 30px;
+            background-color: #555;
+            border: 2px solid #333;
+            border-radius: 0 0 10px 10px;
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+        }
+        
+        .oil-pan-label {
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: #ddd;
+            font-weight: bold;
+        }
+        
+        .oil-level {
+            width: 260px;
+            height: 15px;
+            background-color: rgba(153, 101, 21, 0.8);
+            border-radius: 0 0 5px 5px;
+            position: absolute;
+            bottom: 22px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+        }
+        
+        .pressure-relief-valve {
+            width: 30px;
+            height: 20px;
+            background-color: #c83232;
+            position: absolute;
+            top: 70px;
+            left: 100px;
+            border-radius: 5px;
+            z-index: 3;
+            border: 1px solid #333;
+        }
+        
+        .prv-label {
+            position: absolute;
+            top: 60px;
+            left: 85px;
+            font-size: 12px;
+            color: #333;
+            font-weight: bold;
+            width: 60px;
+            text-align: center;
+        }
+        
+        .bearing {
+            width: 30px;
+            height: 15px;
+            background-color: #ddd;
+            border-radius: 5px;
+            position: absolute;
+            z-index: 3;
+            border: 1px solid #333;
+        }
+        
+        .bearing-label {
+            position: absolute;
+            font-size: 10px;
+            color: #333;
+            font-weight: bold;
+            width: 60px;
+            text-align: center;
+        }
+        
+        .system-type {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        
+        .dry-sump-tank {
+            width: 60px;
+            height: 80px;
+            background-color: #555;
+            border: 2px solid #333;
+            border-radius: 5px;
+            position: absolute;
+            right: 40px;
+            bottom: 40px;
+            z-index: 3;
+            display: none;
+        }
+        
+        .tank-label {
+            position: absolute;
+            bottom: 30px;
+            right: 40px;
+            font-size: 12px;
+            color: #333;
+            font-weight: bold;
+            width: 60px;
+            text-align: center;
+        }
+        
+        .scavenge-pump {
+            width: 40px;
+            height: 30px;
+            background-color: #555;
+            border: 2px solid #333;
+            border-radius: 5px;
+            position: absolute;
+            right: 120px;
+            bottom: 40px;
+            z-index: 3;
+            display: none;
+        }
+        
+        .scavenge-label {
+            position: absolute;
+            bottom: 30px;
+            right: 105px;
+            font-size: 12px;
+            color: #333;
+            font-weight: bold;
+            width: 70px;
+            text-align: center;
+            display: none;
+        }
+        
+        /* Cooling animation specific styles */
+        .cooling-animation {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background-color: #f0f0f0;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+        }
+        
+        .engine-block-cooling {
+            position: absolute;
+            width: 200px;
+            height: 150px;
+            left: 50%;
+            top: 80px;
+            transform: translateX(-50%);
+            background-color: #777;
+            border-radius: 5px;
+            z-index: 1;
+        }
+        
+        .water-jacket {
+            position: absolute;
+            width: 180px;
+            height: 130px;
+            left: 50%;
+            top: 90px;
+            transform: translateX(-50%);
+            border: 3px dashed #77adff;
+            border-radius: 5px;
+            z-index: 2;
+            opacity: 0.5;
+        }
+        
+        .radiator {
+            width: 80px;
+            height: 120px;
+            background-color: #aaa;
+            border: 2px solid #777;
+            position: absolute;
+            top: 20px;
+            left: 40px;
+            z-index: 2;
+        }
+        
+        .radiator-label {
+            position: absolute;
+            top: 10px;
+            left: 50px;
+            font-size: 12px;
+            color: #333;
+            font-weight: bold;
+        }
+        
+        .radiator-fins {
+            position: absolute;
+            width: 70px;
+            height: 100px;
+            top: 30px;
+            left: 45px;
+            background: repeating-linear-gradient(
+                to right,
+                #999,
+                #999 2px,
+                #aaa 2px,
+                #aaa 8px
+            );
+            z-index: 3;
+        }
+        
+        .cooling-path {
+            position: absolute;
+            background-color: #77adff;
+            opacity: 0;
+            transition: opacity 0.5s ease, background-color 0.5s ease;
+            z-index: 3;
+            border-radius: 3px;
+        }
+        
+        .cooling-path.hot {
+            background-color: #ff7777;
+        }
+        
+        .cooling-path.warm {
+            background-color: #ffaa77;
+        }
+        
+        .cooling-path.cool {
+            background-color: #77adff;
+        }
+        
+        .cooling-path.flowing {
+            animation: coolantFlow 1s infinite;
+        }
+        
+        @keyframes coolantFlow {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+        
+        .water-pump {
+            width: 50px;
+            height: 50px;
+            background-color: #777;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 50px;
+            left: 40px;
+            z-index: 2;
+            border: 2px solid #555;
+        }
+        
+        .water-pump-label {
+            position: absolute;
+            bottom: 40px;
+            left: 35px;
+            font-size: 12px;
+            color: #333;
+            font-weight: bold;
+            width: 60px;
+            text-align: center;
+        }
+        
+        .pump-impeller {
+            width: 30px;
+            height: 30px;
+            background-color: #555;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 60px;
+            left: 50px;
+            z-index: 3;
+        }
+        
+        .impeller-blade {
+            position: absolute;
+            width: 15px;
+            height: 5px;
+            background-color: #333;
+            border-radius: 2px;
+            transition: transform 0.3s ease;
+        }
+        
+        .thermostat {
+            width: 30px;
+            height: 30px;
+            background-color: #c83232;
+            border-radius: 50%;
+            position: absolute;
+            top: 60px;
+            left: 160px;
+            z-index: 3;
+            border: 2px solid #555;
+            transition: background-color 0.5s ease;
+        }
+        
+        .thermostat-label {
+            position: absolute;
+            top: 50px;
+            left: 145px;
+            font-size: 12px;
+            color: #333;
+            font-weight: bold;
+            width: 60px;
+            text-align: center;
+        }
+        
+        .thermostat-valve {
+            width: 20px;
+            height: 5px;
+            background-color: #333;
+            position: absolute;
+            top: 73px;
+            left: 165px;
+            z-index: 4;
+            transform-origin: center left;
+            transform: rotate(0deg);
+            transition: transform 0.5s ease;
+        }
+        
+        .expansion-tank {
+            width: 50px;
+            height: 70px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border: 2px solid #777;
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            z-index: 2;
+            border-radius: 5px;
+        }
+        
+        .expansion-label {
+            position: absolute;
+            top: 10px;
+            right: 35px;
+            font-size: 12px;
+            color: #333;
+            font-weight: bold;
+            width: 60px;
+            text-align: center;
+        }
+        
+        .coolant-level {
+            width: 40px;
+            height: 30px;
+            background-color: rgba(119, 173, 255, 0.7);
+            position: absolute;
+            bottom: 27px;
+            right: 45px;
+            z-index: 2;
+            transition: height 0.5s ease;
+        }
+        
+        .radiator-cap {
+            width: 20px;
+            height: 10px;
+            background-color: #555;
+            border-radius: 5px 5px 0 0;
+            position: absolute;
+            top: 18px;
+            right: 55px;
+            z-index: 3;
+        }
+        
+        .fan {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid #555;
+            position: absolute;
+            top: 50px;
+            left: 10px;
+            z-index: 1;
+        }
+        
+        .fan-blade {
+            position: absolute;
+            width: 25px;
+            height: 8px;
+            background-color: #333;
+            border-radius: 2px;
+            transform-origin: right center;
+            z-index: 1;
+            transition: transform 0.2s ease;
+        }
+        
+        .temperature-gauge {
+            position: absolute;
+            top: 10px;
+            left: 140px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: white;
+            border: 2px solid #333;
+            z-index: 3;
+        }
+        
+        .gauge-needle {
+            position: absolute;
+            width: 20px;
+            height: 2px;
+            background-color: red;
+            top: 35px;
+            left: 155px;
+            transform-origin: center left;
+            transform: rotate(-60deg);
+            transition: transform 0.5s ease;
+            z-index: 4;
+        }
+        
+        .temp-indicator {
+            position: absolute;
+            top: 65px;
+            left: 145px;
+            font-size: 10px;
+            color: #333;
+            font-weight: bold;
+            width: 40px;
+            text-align: center;
+        }
+        
+        /* Diagnostic game styles */
+        .diagnostic-game {
+            margin: 20px 0;
+        }
+        
+        .engine-problem {
+            background-color: white;
+            border: 1px solid var(--dark);
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .problem-description {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .diagnostic-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .diagnostic-option {
+            background-color: var(--light);
+            border: 1px solid var(--dark);
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1 0 45%;
+        }
+        
+        .diagnostic-option:hover {
+            background-color: var(--mid);
+        }
+        
+        #finalScore {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .certificate {
+            border: 5px solid var(--dark);
+            padding: 20px;
+            text-align: center;
+            background-color: #f9f9f9;
+            max-width: 600px;
+            margin: 20px auto;
+        }
+        
+        .certificate h2 {
+            color: var(--secondary);
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .certificate p {
+            font-size: 1.2rem;
+            margin: 10px 0;
+        }
+        
+        .print-btn {
+            background-color: var(--dark);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        
+        /* Interactive engine diagram styles */
+        .interactive-engine {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            height: 400px;
+            background-color: #eee;
+            margin: 20px auto;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .engine-part {
+            position: absolute;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .engine-part:hover {
+            transform: scale(1.1);
+        }
+        
+        .popup-info {
+            position: absolute;
+            background-color: white;
+            border: 1px solid var(--dark);
+            border-radius: 5px;
+            padding: 10px;
+            z-index: 100;
+            max-width: 250px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: none;
+        }
+        
+        /* Four-stroke animation */
+        .four-stroke-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0;
+        }
+        
+        .stroke-animation {
+            width: 200px;
+            height: 300px;
+            position: relative;
+            background-color: #eee;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .stroke-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .stroke-btn {
+            background-color: var(--dark);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .stroke-btn.active {
+            background-color: var(--primary);
+        }
+        
+        .stroke-info {
+            background-color: white;
+            border: 1px solid var(--dark);
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 20px;
+            max-width: 600px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Motorsport Engine Systems</h1>
+            <div class="subtitle">Interactive Learning Module</div>
+            <div class="progress-container">
+                <div id="progressBar" class="progress-bar"></div>
+            </div>
+        </div>
+    </header>
+    
+    <div class="tab-nav">
+        <button class="tab-btn active" data-tab="welcome">Welcome</button>
+        <button class="tab-btn" data-tab="mechanical">Mechanical Systems</button>
+        <button class="tab-btn" data-tab="lubrication">Lubrication Systems</button>
+        <button class="tab-btn" data-tab="cooling">Cooling Systems</button>
+        <button class="tab-btn" data-tab="diagnostic">Diagnostic Skills</button>
+        <button class="tab-btn" data-tab="assessment">Final Assessment</button>
+    </div>
+    
+    <main class="container">
+        <div id="welcome" class="tab-content active">
+            <div class="card">
+                <div class="card-header">Welcome to Motorsport Engine Systems</div>
+                <div class="card-body">
+                    <h2>About This Module</h2>
+                    <p>This interactive learning module will help you understand the construction and operation of common engine mechanical, lubrication, and cooling systems used in motorsport. You'll also learn about the procedures involved in removing and replacing system components and evaluating their performance.</p>
+                    
+                    <h3>Learning Outcomes</h3>
+                    <ul>
+                        <li>Understand how main motorsport engine mechanical systems operate</li>
+                        <li>Understand how motorsport engine lubrication systems operate</li>
+                        <li>Understand how motorsport engine cooling, heating, and ventilation systems operate</li>
+                        <li>Understand how to check, replace, and test motorsport engine systems and components</li>
+                    </ul>
+                    
+                    <h3>How to Use This Module</h3>
+                    <p>Navigate through each section using the tabs above. Complete interactive activities and quizzes to test your knowledge. Your progress will be tracked, and you'll earn badges for completing sections. You can earn a certificate by passing the final assessment.</p>
+                    
+                    <div class="badge-container">
+                        <div class="badge" id="mechanicalBadge">M</div>
+                        <div class="badge" id="lubricationBadge">L</div>
+                        <div class="badge" id="coolingBadge">C</div>
+                        <div class="badge" id="diagnosticBadge">D</div>
+                    </div>
+                    
+                    <button class="btn" id="startBtn">Start Learning</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="mechanical" class="tab-content">
+            <div class="card">
+                <div class="card-header">Motorsport Engine Mechanical Systems</div>
+                <div class="card-body">
+                    <h2>Engine Types and Configurations</h2>
+                    <p>Motorsport engines come in various configurations, each with unique advantages for different racing applications.</p>
+                    
+                    <div class="interactive-area">
+                        <h3>Activity: Match Engine Types with Their Characteristics</h3>
+                        <div class="matching-activity">
+                            <div class="matching-item">
+                                <p><strong>Inline Engine</strong></p>
+                                <select class="engine-match" data-correct="Simpler design with all cylinders in a straight line">
+                                    <option value="">Select characteristic</option>
+                                    <option value="Simpler design with all cylinders in a straight line">Simpler design with all cylinders in a straight line</option>
+                                    <option value="Cylinders arranged in two banks at an angle">Cylinders arranged in two banks at an angle</option>
+                                    <option value="Horizontally opposed cylinders">Horizontally opposed cylinders</option>
+                                    <option value="Uses ports instead of valves">Uses ports instead of valves</option>
+                                </select>
+                            </div>
+                            <div class="matching-item">
+                                <p><strong>V Engine</strong></p>
+                                <select class="engine-match" data-correct="Cylinders arranged in two banks at an angle">
+                                    <option value="">Select characteristic</option>
+                                    <option value="Simpler design with all cylinders in a straight line">Simpler design with all cylinders in a straight line</option>
+                                    <option value="Cylinders arranged in two banks at an angle">Cylinders arranged in two banks at an angle</option>
+                                    <option value="Horizontally opposed cylinders">Horizontally opposed cylinders</option>
+                                    <option value="Uses ports instead of valves">Uses ports instead of valves</option>
+                                </select>
+                            </div>
+                            <div class="matching-item">
+                                <p><strong>Flat Engine</strong></p>
+                                <select class="engine-match" data-correct="Horizontally opposed cylinders">
+                                    <option value="">Select characteristic</option>
+                                    <option value="Simpler design with all cylinders in a straight line">Simpler design with all cylinders in a straight line</option>
+                                    <option value="Cylinders arranged in two banks at an angle">Cylinders arranged in two banks at an angle</option>
+                                    <option value="Horizontally opposed cylinders">Horizontally opposed cylinders</option>
+                                    <option value="Uses ports instead of valves">Uses ports instead of valves</option>
+                                </select>
+                            </div>
+                            <div class="matching-item">
+                                <p><strong>Two-Stroke Engine</strong></p>
+                                <select class="engine-match" data-correct="Uses ports instead of valves">
+                                    <option value="">Select characteristic</option>
+                                    <option value="Simpler design with all cylinders in a straight line">Simpler design with all cylinders in a straight line</option>
+                                    <option value="Cylinders arranged in two banks at an angle">Cylinders arranged in two banks at an angle</option>
+                                    <option value="Horizontally opposed cylinders">Horizontally opposed cylinders</option>
+                                    <option value="Uses ports instead of valves">Uses ports instead of valves</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="btn" id="checkEngineMatchBtn">Check Answers</button>
+                        <div id="engineMatchFeedback" class="feedback"></div>
+                    </div>
+                    
+                    <h2>Four-Stroke Cycle</h2>
+                    <p>The four-stroke cycle is the most common operating principle used in motorsport engines.</p>
+                    
+                    <div class="four-stroke-container">
+                        <div class="stroke-animation" id="strokeAnimation">
+                            <!-- Animation will be rendered here by JS -->
+                        </div>
+                        <div class="stroke-controls">
+                            <button class="stroke-btn active" data-stroke="intake">Intake</button>
+                            <button class="stroke-btn" data-stroke="compression">Compression</button>
+                            <button class="stroke-btn" data-stroke="power">Power</button>
+                            <button class="stroke-btn" data-stroke="exhaust">Exhaust</button>
+                            <button class="stroke-btn" data-stroke="play">Play Animation</button>
+                        </div>
+                        <div class="stroke-info" id="strokeInfo">
+                            <h3>Intake Stroke</h3>
+                            <p>The piston moves downward in the cylinder, creating a vacuum. The intake valve opens, allowing the air-fuel mixture to be drawn into the cylinder.</p>
+                        </div>
+                    </div>
+                    
+                    <h2>Engine Components and Terminology</h2>
+                    <p>Understanding engine terminology is essential for motorsport technicians.</p>
+                    
+                    <div class="interactive-area">
+                        <h3>Activity: Drag and Drop Engine Components</h3>
+                        <p>Drag each component to the correct drop zone:</p>
+                        
+                        <div class="drag-container" id="engineComponents">
+                            <div class="drag-item" draggable="true" data-target="valvetrain">Camshaft</div>
+                            <div class="drag-item" draggable="true" data-target="valvetrain">Valve Spring</div>
+                            <div class="drag-item" draggable="true" data-target="valvetrain">Rocker Arm</div>
+                            <div class="drag-item" draggable="true" data-target="bottom-end">Crankshaft</div>
+                            <div class="drag-item" draggable="true" data-target="bottom-end">Connecting Rod</div>
+                            <div class="drag-item" draggable="true" data-target="bottom-end">Main Bearing</div>
+                            <div class="drag-item" draggable="true" data-target="cylinder">Piston</div>
+                            <div class="drag-item" draggable="true" data-target="cylinder">Piston Ring</div>
+                            <div class="drag-item" draggable="true" data-target="cylinder">Cylinder Liner</div>
+                        </div>
+                        
+                        <div class="drop-zones">
+                            <h4>Valvetrain Components</h4>
+                            <div class="drop-zone" id="valvetrain"></div>
+                            
+                            <h4>Bottom End Components</h4>
+                            <div class="drop-zone" id="bottom-end"></div>
+                            
+                            <h4>Cylinder Components</h4>
+                            <div class="drop-zone" id="cylinder"></div>
+                        </div>
+                        
+                        <button class="btn" id="checkEngineComponentsBtn">Check Answers</button>
+                        <div id="engineComponentsFeedback" class="feedback"></div>
+                    </div>
+                    
+                    <h2>Key Engineering Principles</h2>
+                    <p>Understanding key engineering principles helps you calculate and optimize engine performance.</p>
+                    
+                    <div class="interactive-area">
+                        <h3>Activity: Engine Performance Calculator</h3>
+                        <div class="calculator">
+                            <div class="form-group">
+                                <label for="bore">Bore (mm):</label>
+                                <input type="number" id="bore" min="50" max="120" value="86">
+                            </div>
+                            <div class="form-group">
+                                <label for="stroke">Stroke (mm):</label>
+                                <input type="number" id="stroke" min="50" max="120" value="86">
+                            </div>
+                            <div class="form-group">
+                                <label for="cylinders">Number of Cylinders:</label>
+                                <input type="number" id="cylinders" min="1" max="12" value="4">
+                            </div>
+                            <div class="form-group">
+                                <label for="clearanceVolume">Clearance Volume (cc):</label>
+                                <input type="number" id="clearanceVolume" min="5" max="100" value="50">
+                            </div>
+                            
+                            <button class="btn" id="calculateBtn">Calculate</button>
+                            
+                            <div id="calculationResults" class="results">
+                                <p><strong>Single Cylinder Capacity:</strong> <span id="singleCylinderCapacity">0</span> cc</p>
+                                <p><strong>Total Engine Capacity:</strong> <span id="totalCapacity">0</span> cc</p>
+                                <p><strong>Compression Ratio:</strong> <span id="compressionRatio">0</span>:1</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn" id="completeMechanicalBtn">Complete Section</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="lubrication" class="tab-content">
+            <div class="card">
+                <div class="card-header">Motorsport Engine Lubrication Systems</div>
+                <div class="card-body">
+                    <h2>Lubrication System Types</h2>
+                    <p>Proper lubrication is critical to engine performance and longevity in motorsport applications.</p>
+                    
+                    <div class="interactive-area">
+                        <h3>Activity: Compare Lubrication Systems</h3>
+                        <table class="comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>System Type</th>
+                                    <th>Description</th>
+                                    <th>Advantages</th>
+                                    <th>Disadvantages</th>
+                                    <th>Common Applications</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Wet Sump</td>
+                                    <td>Oil is stored in a pan at the bottom of the engine</td>
+                                    <td>
+                                        <ul>
+                                            <li>Simpler design</li>
+                                            <li>Lower cost</li>
+                                            <li>Less maintenance</li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            <li>Oil can surge during high-G cornering</li>
+                                            <li>Limited oil capacity</li>
+                                        </ul>
+                                    </td>
+                                    <td>Road cars, some rally engines, lower-tier racing</td>
+                                </tr>
+                                <tr>
+                                    <td>Dry Sump</td>
+                                    <td>Oil is stored in a separate tank, multiple scavenge pumps</td>
+                                    <td>
+                                        <ul>
+                                            <li>Better oil control during high-G forces</li>
+                                            <li>Allows lower engine positioning</li>
+                                            <li>Increased oil capacity</li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            <li>More complex</li>
+                                            <li>Higher cost</li>
+                                            <li>Additional weight from components</li>
+                                        </ul>
+                                    </td>
+                                    <td>Formula 1, GT racing, high-performance motorsport</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <h2>Lubrication System Components</h2>
+                    <p>A motorsport lubrication system consists of several crucial components working together.</p>
+                    
+                    <div class="interactive-area">
+                        <h3>Activity: Identify Lubrication System Components</h3>
+                        <div class="quiz-container">
+                            <div class="question">
+                                <p>What component provides the driving force to circulate oil throughout the engine?</p>
+                                <ul class="options">
+                                    <li class="option" data-correct="true">Oil Pump</li>
+                                    <li class="option">Oil Filter</li>
+                                    <li class="option">Oil Cooler</li>
+                                    <li class="option">Oil Pan</li>
+                                </ul>
+                            </div>
+                            <div class="question">
+                                <p>Which component prevents excessive oil pressure that could damage components?</p>
+                                <ul class="options">
+                                    <li class="option">Oil Gallery</li>
+                                    <li class="option" data-correct="true">Pressure Relief Valve</li>
+                                    <li class="option">Oil Pump</li>
+                                    <li class="option">Oil Sump</li>
+                                </ul>
+                            </div>
+                            <div class="question">
+                                <p>In a dry sump system, where is the oil stored?</p>
+                                <ul class="options">
+                                    <li class="option">In the engine block</li>
+                                    <li class="option">In the oil pan</li>
+                                    <li class="option" data-correct="true">In a separate oil tank</li>
+                                    <li class="option">In the cylinder head</li>
+                                </ul>
+                            </div>
+                            <button class="btn" id="checkLubeQuizBtn">Check Answers</button>
+                            <div id="lubeQuizFeedback" class="feedback"></div>
+                        </div>
+                    </div>
+                    
+                    <h2>Oil Classification and Properties</h2>
+                    <p>Selecting the right oil with appropriate properties is crucial for motorsport engines.</p>
+                    
+                    <div class="interactive-area">
+                        <h3>Activity: Oil Properties Matching</h3>
+                        <div class="matching-activity">
+                            <div class="matching-item">
+                                <p><strong>Viscosity</strong></p>
+                                <select class="oil-match" data-correct="The oil's resistance to flow">
+                                    <option value="">Select description</option>
+                                    <option value="The oil's resistance to flow">The oil's resistance to flow</option>
+                                    <option value="The oil's ability to resist breaking down under high temperatures">The oil's ability to resist breaking down under high temperatures</option>
+                                    <option value="The oil's ability to neutralize acids">The oil's ability to neutralize acids</option>
+                                    <option value="The oil's ability to prevent foaming">The oil's ability to prevent foaming</option>
+                                </select>
+                            </div>
+                            <div class="matching-item">
+                                <p><strong>Thermal Stability</strong></p>
+                                <select class="oil-match" data-correct="The oil's ability to resist breaking down under high temperatures">
+                                    <option value="">Select description</option>
+                                    <option value="The oil's resistance to flow">The oil's resistance to flow</option>
+                                    <option value="The oil's ability to resist breaking down under high temperatures">The oil's ability to resist breaking down under high temperatures</option>
+                                    <option value="The oil's ability to neutralize acids">The oil's ability to neutralize acids</option>
+                                    <option value="The oil's ability to prevent foaming">The oil's ability to prevent foaming</option>
+                                </select>
+                            </div>
+                            <div class="matching-item">
+                                <p><strong>Total Base Number (TBN)</strong></p>
+                                <select class="oil-match" data-correct="The oil's ability to neutralize acids">
+                                    <option value="">Select description</option>
+                                    <option value="The oil's resistance to flow">The oil's resistance to flow</option>
+                                    <option value="The oil's ability to resist breaking down under high temperatures">The oil's ability to resist breaking down under high temperatures</option>
+                                    <option value="The oil's ability to neutralize acids">The oil's ability to neutralize acids</option>
+                                    <option value="The oil's ability to prevent foaming">The oil's ability to prevent foaming</option>
+                                </select>
+                            </div>
+                            <div class="matching-item">
+                                <p><strong>Anti-Foaming</strong></p>
+                                <select class="oil-match" data-correct="The oil's ability to prevent foaming">
+                                    <option value="">Select description</option>
+                                    <option value="The oil's resistance to flow">The oil's resistance to flow</option>
+                                    <option value="The oil's ability to resist breaking down under high temperatures">The oil's ability to resist breaking down under high temperatures</option>
+                                    <option value="The oil's ability to neutralize acids">The oil's ability to neutralize acids</option>
+                                    <option value="The oil's ability to prevent foaming">The oil's ability to prevent foaming</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="btn" id="checkOilMatchBtn">Check Answers</button>
+                        <div id="oilMatchFeedback" class="feedback"></div>
+                    </div>
+                    
+                    <h2>Lubrication System Operation</h2>
+                    <p>Understanding how oil flows through an engine is essential for diagnosing and fixing lubrication problems.</p>
+                    
+                    <div class="interactive-area">
+                        <h3>Activity: Lubrication Flow Simulation</h3>
+                        <div class="animation-container">
+                            <div class="lube-animation" id="lubeAnimation">
+                                <!-- Animation will be rendered here by JS -->
+                            </div>
+                        </div>
+                        <div class="controls">
+                            <button class="btn" id="startLubeAnimation">Start Animation</button>
+                            <button class="btn" id="pauseLubeAnimation">Pause</button>
+                            <button class="btn" id="resetLubeAnimation">Reset</button>
+                        </div>
+                    </div>
+                    
+                    <button class="btn" id="completeLubricationBtn">Complete Section</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="cooling" class="tab-content">
+            <div class="card">
+                <div class="card-header">Motorsport Engine Cooling Systems</div>
+                <div class="card-body">
+                    <h2>Cooling System Principles</h2>
+                    <p>Effective cooling is critical to maintain optimal engine performance and prevent damage.</p>
+                    
+                    <div class="interactive-area">
+                        <h3>Activity: Cooling System Physics Quiz</h3>
+                        <div class="quiz-container">
+                            <div class="question">
+                                <p>Which principle explains why coolant expands when heated?</p>
+                                <ul class="options">
+                                    <li class="option" data-correct="true">Thermal Expansion</li>
+                                    <li class="option">Heat Capacity</li>
+                                    <li class="option">Conduction</li>
+                                    <li class="option">Radiation</li>
+                                </ul>
+                            </div>
+                            <div class="question">
+                                <p>What is the primary method of heat transfer from the cylinder walls to the coolant?</p>
+                                <ul class="options">
+                                    <li class="option">Radiation</li>
+                                    <li class="option" data-correct="true">Conduction</li>
+                                    <li class="option">Convection</li>
+                                    <li class="option">Reflection</li>
+                                </ul>
+                            </div>
+                            <div class="question">
+                                <p>What property of a coolant indicates how much heat energy it can absorb?</p>
+                                <ul class="options">
+                                    <li class="option">Thermal conductivity</li>
+                                    <li class="option">Boiling point</li>
+                                    <li class="option" data-correct="true">Specific heat capacity</li>
+                                    <li class="option">Viscosity</li>
+                                </ul>
+                            </div>
+                            <button class="btn" id="checkCoolingQuizBtn">Check Answers</button>
+                            <div id="coolingQuizFeedback" class="feedback"></div>
+                        </div>
+                    </div>
+                    
+                    <h2>Cooling System Components</h2>
+                    <p>A motorsport cooling system consists of several components working together to maintain optimal engine temperature.</p>
+                    
+                    <div class="interactive-area">
+                        <h3>Activity: Identify Cooling System Components</h3>
+                        <div class="drag-container" id="coolingComponents">
+                            <div class="drag-item" draggable="true" data-target="primary">Radiator</div>
+                            <div class="drag-item" draggable="true" data-target="primary">Water Pump</div>
+                            <div class="drag-item" draggable="true" data-target="primary">Thermostat</div>
+                            <div class="drag-item" draggable="true" data-target="secondary">Expansion Tank</div>
+                            <div class="drag-item" draggable="true" data-target="secondary">Pressure Cap</div>
+                            <div class="drag-item" draggable="true" data-target="secondary">Coolant Temperature Sensor</div>
+                            <div class="drag-item" draggable="true" data-target="airflow">Cooling Fan</div>
+                            <div class="drag-item" draggable="true" data-target="airflow">Ducting</div>
+                            <div class="drag-item" draggable="true" data-target="airflow">Undertray</div>
+                        </div>
+                        
+                        <div class="drop-zones">
+                            <h4>Primary Cooling Components</h4>
+                            <div class="drop-zone" id="primary"></div>
+                            
+                            <h4>Secondary Cooling Components</h4>
+                            <div class="drop-zone" id="secondary"></div>
+                            
+                            <h4>Airflow Management Components</h4>
+                            <div class="drop-zone" id="airflow"></div>
+                        </div>
+                        
+                        <button class="btn" id="checkCoolingComponentsBtn">Check Answers</button>
+                        <div id="coolingComponentsFeedback" class="feedback"></div>
+                    </div>
+                    
+                    <h2>Cooling System Operation</h2>
+                    <p>Understanding how coolant flows through an engine is essential for diagnosing and fixing cooling problems.</p>
+                    
+                    <div class="interactive-area">
+                        <h3>Activity: Cooling Flow Simulation</h3>
+                        <div class="animation-container">
+                            <div class="cooling-animation" id="coolingAnimation">
+                                <!-- Animation will be rendered here by JS -->
+                            </div>
+                        </div>
+                        <div class="controls">
+                            <button class="btn" id="startCoolingAnimation">Start Animation</button>
+                            <button class="btn" id="pauseCoolingAnimation">Pause</button>
+                            <button class="btn" id="resetCoolingAnimation">Reset</button>
+                        </div>
+                    </div>
+                    
+                    <h2>Cooling System Testing</h2>
+                    <p>Several tests can be performed to diagnose cooling system issues.</p>
+                    
+                    <div class="interactive-area">
+                        <h3>Activity: Match Testing Tools with Their Purpose</h3>
+                        <div class="matching-activity">
+                            <div class="matching-item">
+                                <p><strong>Pressure Tester</strong></p>
+                                <select class="cooling-test-match" data-correct="Tests for leaks in the cooling system">
+                                    <option value="">Select purpose</option>
+                                    <option value="Tests for leaks in the cooling system">Tests for leaks in the cooling system</option>
+                                    <option value="Checks the opening pressure of the radiator cap">Checks the opening pressure of the radiator cap</option>
+                                    <option value="Measures the freezing point of coolant">Measures the freezing point of coolant</option>
+                                    <option value="Detects combustion gases in the coolant">Detects combustion gases in the coolant</option>
+                                </select>
+                            </div>
+                            <div class="matching-item">
+                                <p><strong>Radiator Cap Tester</strong></p>
+                                <select class="cooling-test-match" data-correct="Checks the opening pressure of the radiator cap">
+                                    <option value="">Select purpose</option>
+                                    <option value="Tests for leaks in the cooling system">Tests for leaks in the cooling system</option>
+                                    <option value="Checks the opening pressure of the radiator cap">Checks the opening pressure of the radiator cap</option>
+                                    <option value="Measures the freezing point of coolant">Measures the freezing point of coolant</option>
+                                    <option value="Detects combustion gases in the coolant">Detects combustion gases in the coolant</option>
+                                </select>
+                            </div>
+                            <div class="matching-item">
+                                <p><strong>Hydrometer</strong></p>
+                                <select class="cooling-test-match" data-correct="Measures the freezing point of coolant">
+                                    <option value="">Select purpose</option>
+                                    <option value="Tests for leaks in the cooling system">Tests for leaks in the cooling system</option>
+                                    <option value="Checks the opening pressure of the radiator cap">Checks the opening pressure of the radiator cap</option>
+                                    <option value="Measures the freezing point of coolant">Measures the freezing point of coolant</option>
+                                    <option value="Detects combustion gases in the coolant">Detects combustion gases in the coolant</option>
+                                </select>
+                            </div>
+                            <div class="matching-item">
+                                <p><strong>Combustion Gas Tester</strong></p>
+                                <select class="cooling-test-match" data-correct="Detects combustion gases in the coolant">
+                                    <option value="">Select purpose</option>
+                                    <option value="Tests for leaks in the cooling system">Tests for leaks in the cooling system</option>
+                                    <option value="Checks the opening pressure of the radiator cap">Checks the opening pressure of the radiator cap</option>
+                                    <option value="Measures the freezing point of coolant">Measures the freezing point of coolant</option>
+                                    <option value="Detects combustion gases in the coolant">Detects combustion gases in the coolant</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="btn" id="checkCoolingTestBtn">Check Answers</button>
+                        <div id="coolingTestFeedback" class="feedback"></div>
+                    </div>
+                    
+                    <button class="btn" id="completeCoolingBtn">Complete Section</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="diagnostic" class="tab-content">
+            <div class="card">
+                <div class="card-header">Motorsport Engine Diagnostic Skills</div>
+                <div class="card-body">
+                    <h2>Engine Fault Diagnosis</h2>
+                    <p>Diagnosing engine faults quickly and accurately is a critical skill in motorsport.</p>
+                    
+                    <div class="interactive-area">
+                        <h3>Activity: Engine Problem Diagnosis Game</h3>
+                        <div class="diagnostic-game" id="diagnosticGame">
+                            <div class="engine-problem">
+                                <div class="problem-description">Race car is experiencing a loss of power and excessive blue smoke from the exhaust.</div>
+                                <p>What is the most likely cause?</p>
+                                <div class="diagnostic-options">
+                                    <div class="diagnostic-option" data-correct="true">Oil consumption through worn valve guides or piston rings</div>
+                                    <div class="diagnostic-option">Fuel delivery problem</div>
+                                    <div class="diagnostic-option">Ignition timing issue</div>
+                                    <div class="diagnostic-option">Blocked air filter</div>
+                                </div>
+                            </div>
+                            
+                            <div class="engine-problem">
+                                <div class="problem-description">Engine is overheating during high-speed sections of the track but runs at normal temperature in slower sections.</div>
+                                <p>What is the most likely cause?</p>
+                                <div class="diagnostic-options">
+                                    <div class="diagnostic-option">Faulty thermostat</div>
+                                    <div class="diagnostic-option">Low coolant level</div>
+                                    <div class="diagnostic-option" data-correct="true">Insufficient airflow through radiator at high speeds</div>
+                                    <div class="diagnostic-option">Water pump failing</div>
+                                </div>
+                            </div>
+                            
+                            <div class="engine-problem">
+                                <div class="problem-description">Engine has low oil pressure warning light coming on during hard cornering.</div>
+                                <p>What is the most likely cause?</p>
+                                <div class="diagnostic-options">
+                                    <div class="diagnostic-option">Oil pump failure</div>
+                                    <div class="diagnostic-option" data-correct="true">Oil surge in wet sump system</div>
+                                    <div class="diagnostic-option">Blocked oil filter</div>
+                                    <div class="diagnostic-option">Oil temperature too high</div>
+                                </div>
+                            </div>
+                            
+                            <div class="engine-problem">
+                                <div class="problem-description">Engine is making a knocking noise that increases with RPM.</div>
+                                <p>What is the most likely cause?</p>
+                                <div class="diagnostic-options">
+                                    <div class="diagnostic-option">Valve clearance too tight</div>
+                                    <div class="diagnostic-option">Piston slap</div>
+                                    <div class="diagnostic-option" data-correct="true">Connecting rod bearing wear</div>
+                                    <div class="diagnostic-option">Timing chain tensioner failure</div>
+                                </div>
+                            </div>
+                            
+                            <div id="diagnosticFeedback" class="feedback"></div>
+                            <button class="btn" id="checkDiagnosticBtn">Check Diagnosis</button>
+                        </div>
+                    </div>
+                    
+                    <h2>Component Inspection and Replacement</h2>
+                    <p>Proper inspection and replacement procedures are essential to ensure engine reliability.</p>
+                    
+                    <div class="interactive-area">
+                        <h3>Activity: Order the Steps</h3>
+                        <p>Arrange the following steps in the correct order for replacing a water pump:</p>
+                        <div id="stepOrderContainer" class="drag-container">
+                            <div class="drag-item" draggable="true" data-order="1">Drain cooling system</div>
+                            <div class="drag-item" draggable="true" data-order="2">Remove drive belts</div>
+                            <div class="drag-item" draggable="true" data-order="3">Disconnect hoses from water pump</div>
+                            <div class="drag-item" draggable="true" data-order="4">Remove water pump mounting bolts</div>
+                            <div class="drag-item" draggable="true" data-order="5">Remove water pump</div>
+                            <div class="drag-item" draggable="true" data-order="6">Clean mating surfaces</div>
+                            <div class="drag-item" draggable="true" data-order="7">Install new water pump with new gasket</div>
+                            <div class="drag-item" draggable="true" data-order="8">Reconnect hoses</div>
+                            <div class="drag-item" draggable="true" data-order="9">Reinstall drive belts</div>
+                            <div class="drag-item" draggable="true" data-order="10">Refill cooling system</div>
+                        </div>
+                        <div id="stepOrderDropZone" class="drop-zone order-zone"></div>
+                        <button class="btn" id="checkOrderBtn">Check Order</button>
+                        <div id="orderFeedback" class="feedback"></div>
+                    </div>
+                    
+                    <h2>Testing and Evaluation</h2>
+                    <p>After component replacement, proper testing ensures the repair has been successful.</p>
+                    
+                    <div class="interactive-area">
+                        <h3>Activity: Match Testing Methods with Components</h3>
+                        <div class="matching-activity">
+                            <div class="matching-item">
+                                <p><strong>Compression Test</strong></p>
+                                <select class="testing-match" data-correct="Piston rings, valves, cylinder head gasket">
+                                    <option value="">Select component</option>
+                                    <option value="Piston rings, valves, cylinder head gasket">Piston rings, valves, cylinder head gasket</option>
+                                    <option value="Oil pump, oil pressure relief valve">Oil pump, oil pressure relief valve</option>
+                                    <option value="Radiator, water pump, thermostat">Radiator, water pump, thermostat</option>
+                                    <option value="Camshaft, valve timing">Camshaft, valve timing</option>
+                                </select>
+                            </div>
+                            <div class="matching-item">
+                                <p><strong>Oil Pressure Test</strong></p>
+                                <select class="testing-match" data-correct="Oil pump, oil pressure relief valve">
+                                    <option value="">Select component</option>
+                                    <option value="Piston rings, valves, cylinder head gasket">Piston rings, valves, cylinder head gasket</option>
+                                    <option value="Oil pump, oil pressure relief valve">Oil pump, oil pressure relief valve</option>
+                                    <option value="Radiator, water pump, thermostat">Radiator, water pump, thermostat</option>
+                                    <option value="Camshaft, valve timing">Camshaft, valve timing</option>
+                                </select>
+                            </div>
+                            <div class="matching-item">
+                                <p><strong>Cooling System Pressure Test</strong></p>
+                                <select class="testing-match" data-correct="Radiator, water pump, thermostat">
+                                    <option value="">Select component</option>
+                                    <option value="Piston rings, valves, cylinder head gasket">Piston rings, valves, cylinder head gasket</option>
+                                    <option value="Oil pump, oil pressure relief valve">Oil pump, oil pressure relief valve</option>
+                                    <option value="Radiator, water pump, thermostat">Radiator, water pump, thermostat</option>
+                                    <option value="Camshaft, valve timing">Camshaft, valve timing</option>
+                                </select>
+                            </div>
+                            <div class="matching-item">
+                                <p><strong>Valve Timing Check</strong></p>
+                                <select class="testing-match" data-correct="Camshaft, valve timing">
+                                    <option value="">Select component</option>
+                                    <option value="Piston rings, valves, cylinder head gasket">Piston rings, valves, cylinder head gasket</option>
+                                    <option value="Oil pump, oil pressure relief valve">Oil pump, oil pressure relief valve</option>
+                                    <option value="Radiator, water pump, thermostat">Radiator, water pump, thermostat</option>
+                                    <option value="Camshaft, valve timing">Camshaft, valve timing</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="btn" id="checkTestingMatchBtn">Check Answers</button>
+                        <div id="testingMatchFeedback" class="feedback"></div>
+                    </div>
+                    
+                    <button class="btn" id="completeDiagnosticBtn">Complete Section</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="assessment" class="tab-content">
+            <div class="card">
+                <div class="card-header">Final Assessment</div>
+                <div class="card-body">
+                    <h2>Comprehensive Review Quiz</h2>
+                    <p>Test your knowledge of motorsport engine mechanical, lubrication, and cooling systems.</p>
+                    
+                    <div class="quiz-container" id="finalQuiz">
+                        <div class="question">
+                            <p>1. What is the correct term for the distance the piston travels from TDC to BDC?</p>
+                            <ul class="options">
+                                <li class="option">Bore</li>
+                                <li class="option" data-correct="true">Stroke</li>
+                                <li class="option">Displacement</li>
+                                <li class="option">Compression ratio</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="question">
+                            <p>2. Which engine configuration typically has the lowest center of gravity?</p>
+                            <ul class="options">
+                                <li class="option">Inline</li>
+                                <li class="option" data-correct="true">Flat (Boxer)</li>
+                                <li class="option">V-Configuration</li>
+                                <li class="option">Rotary</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="question">
+                            <p>3. What is the main advantage of a dry sump lubrication system in motorsport?</p>
+                            <ul class="options">
+                                <li class="option">Lower cost</li>
+                                <li class="option">Simpler design</li>
+                                <li class="option" data-correct="true">Prevents oil starvation during high-G cornering</li>
+                                <li class="option">Lower oil temperatures</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="question">
+                            <p>4. Which cooling system component regulates coolant flow based on temperature?</p>
+                            <ul class="options">
+                                <li class="option">Water pump</li>
+                                <li class="option">Radiator cap</li>
+                                <li class="option" data-correct="true">Thermostat</li>
+                                <li class="option">Expansion tank</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="question">
+                            <p>5. What property of engine oil changes most significantly with temperature?</p>
+                            <ul class="options">
+                                <li class="option" data-correct="true">Viscosity</li>
+                                <li class="option">Density</li>
+                                <li class="option">Color</li>
+                                <li class="option">Detergent capability</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="question">
+                            <p>6. Which component in a four-stroke engine is responsible for opening and closing the valves?</p>
+                            <ul class="options">
+                                <li class="option">Crankshaft</li>
+                                <li class="option" data-correct="true">Camshaft</li>
+                                <li class="option">Connecting rod</li>
+                                <li class="option">Flywheel</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="question">
+                            <p>7. What is the purpose of cylinder head gaskets?</p>
+                            <ul class="options">
+                                <li class="option">To time the valves</li>
+                                <li class="option">To filter the oil</li>
+                                <li class="option">To reduce vibration</li>
+                                <li class="option" data-correct="true">To seal combustion gases, coolant, and oil</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="question">
+                            <p>8. What is the most likely cause of blue smoke from the exhaust?</p>
+                            <ul class="options">
+                                <li class="option" data-correct="true">Oil burning in the combustion chamber</li>
+                                <li class="option">Coolant in the combustion chamber</li>
+                                <li class="option">Incomplete fuel combustion</li>
+                                <li class="option">Excessive fuel injection</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="question">
+                            <p>9. What testing method is best for checking the condition of piston rings?</p>
+                            <ul class="options">
+                                <li class="option" data-correct="true">Compression test</li>
+                                <li class="option">Oil pressure test</li>
+                                <li class="option">Vacuum test</li>
+                                <li class="option">Combustion leak test</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="question">
+                            <p>10. What is the primary purpose of an engine's oil filter?</p>
+                            <ul class="options">
+                                <li class="option">To cool the oil</li>
+                                <li class="option">To regulate oil pressure</li>
+                                <li class="option" data-correct="true">To remove contaminants from the oil</li>
+                                <li class="option">To store excess oil</li>
+                            </ul>
+                        </div>
+                        
+                        <button class="btn" id="submitFinalQuizBtn">Submit Quiz</button>
+                        <div id="finalQuizFeedback" class="feedback"></div>
+                        <div id="finalScore"></div>
+                    </div>
+                    
+                    <div id="certificate" class="certificate" style="display: none;">
+                        <h2>Certificate of Completion</h2>
+                        <p>This certifies that</p>
+                        <p><strong id="studentName">Student Name</strong></p>
+                        <p>has successfully completed the</p>
+                        <p><strong>Motorsport Engine Systems</strong></p>
+                        <p>training module with a score of</p>
+                        <p><strong id="certificateScore">0%</strong></p>
+                        <p>Date: <span id="certificateDate"></span></p>
+                        <button class="print-btn" id="printCertificateBtn">Print Certificate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>Motorsport Engine Systems Interactive Learning Module</p>
+            <p>Based on NIT REF: MSM05.1 - Knowledge of Motorsport Engine Mechanical, Lubrication and Cooling System Units and Components</p>
+        </div>
+    </footer>
+    
+    <script>
+        // Track progress and scores
+        const progress = {
+            welcome: true,
+            mechanical: false,
+            lubrication: false,
+            cooling: false,
+            diagnostic: false,
+            assessment: false,
+            totalSections: 5,
+            completedSections: 0,
+            mechanicalScore: 0,
+            lubricationScore: 0,
+            coolingScore: 0,
+            diagnosticScore: 0,
+            finalScore: 0
+        };
+        
+        // DOM Elements
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const progressBar = document.getElementById('progressBar');
+        
+        // Navigation functionality
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.getAttribute('data-tab');
+                
+                // Remove active class from all tabs
+                tabBtns.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(tab => tab.classList.remove('active'));
+                
+                // Add active class to selected tab
+                btn.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        // Start button functionality
+        document.getElementById('startBtn').addEventListener('click', () => {
+            tabBtns.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(tab => tab.classList.remove('active'));
+            
+            tabBtns[1].classList.add('active'); // Mechanical tab
+            document.getElementById('mechanical').classList.add('active');
+        });
+        
+        // Update progress
+        function updateProgress() {
+            progress.completedSections = 0;
+            if (progress.mechanical) progress.completedSections++;
+            if (progress.lubrication) progress.completedSections++;
+            if (progress.cooling) progress.completedSections++;
+            if (progress.diagnostic) progress.completedSections++;
+            if (progress.assessment) progress.completedSections++;
+            
+            const progressPercentage = (progress.completedSections / progress.totalSections) * 100;
+            progressBar.style.width = progressPercentage + '%';
+            
+            // Update badges
+            if (progress.mechanical) document.getElementById('mechanicalBadge').classList.add('earned');
+            if (progress.lubrication) document.getElementById('lubricationBadge').classList.add('earned');
+            if (progress.cooling) document.getElementById('coolingBadge').classList.add('earned');
+            if (progress.diagnostic) document.getElementById('diagnosticBadge').classList.add('earned');
+        }
+        
+        // Complete section buttons
+        document.getElementById('completeMechanicalBtn').addEventListener('click', () => {
+            progress.mechanical = true;
+            progress.mechanicalScore = 80; // Placeholder score
+            updateProgress();
+            
+            // Go to next section
+            tabBtns.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(tab => tab.classList.remove('active'));
+            
+            tabBtns[2].classList.add('active'); // Lubrication tab
+            document.getElementById('lubrication').classList.add('active');
+            
+            // Show feedback
+            alert('Mechanical Systems section completed! You earned the Mechanical Systems badge.');
+        });
+        
+        document.getElementById('completeLubricationBtn').addEventListener('click', () => {
+            progress.lubrication = true;
+            progress.lubricationScore = 85; // Placeholder score
+            updateProgress();
+            
+            // Go to next section
+            tabBtns.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(tab => tab.classList.remove('active'));
+            
+            tabBtns[3].classList.add('active'); // Cooling tab
+            document.getElementById('cooling').classList.add('active');
+            
+            // Show feedback
+            alert('Lubrication Systems section completed! You earned the Lubrication Systems badge.');
+        });
+        
+        document.getElementById('completeCoolingBtn').addEventListener('click', () => {
+            progress.cooling = true;
+            progress.coolingScore = 90; // Placeholder score
+            updateProgress();
+            
+            // Go to next section
+            tabBtns.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(tab => tab.classList.remove('active'));
+            
+            tabBtns[4].classList.add('active'); // Diagnostic tab
+            document.getElementById('diagnostic').classList.add('active');
+            
+            // Show feedback
+            alert('Cooling Systems section completed! You earned the Cooling Systems badge.');
+        });
+        
+        document.getElementById('completeDiagnosticBtn').addEventListener('click', () => {
+            progress.diagnostic = true;
+            progress.diagnosticScore = 85; // Placeholder score
+            updateProgress();
+            
+            // Go to next section
+            tabBtns.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(tab => tab.classList.remove('active'));
+            
+            tabBtns[5].classList.add('active'); // Assessment tab
+            document.getElementById('assessment').classList.add('active');
+            
+            // Show feedback
+            alert('Diagnostic Skills section completed! You earned the Diagnostic Skills badge.');
+        });
+        
+        // Engine matching activity
+        document.getElementById('checkEngineMatchBtn').addEventListener('click', () => {
+            const selects = document.querySelectorAll('.engine-match');
+            let correct = 0;
+            
+            selects.forEach(select => {
+                const correctAnswer = select.getAttribute('data-correct');
+                if (select.value === correctAnswer) {
+                    correct++;
+                    select.style.borderColor = 'green';
+                } else {
+                    select.style.borderColor = 'red';
+                }
+            });
+            
+            const feedback = document.getElementById('engineMatchFeedback');
+            if (correct === selects.length) {
+                feedback.textContent = 'Great job! All answers are correct.';
+                feedback.className = 'feedback success';
+            } else {
+                feedback.textContent = `You got ${correct} out of ${selects.length} correct. Try again!`;
+                feedback.className = 'feedback error';
+            }
+        });
+        
+        // Engine components drag and drop
+        const dragItems = document.querySelectorAll('.drag-item');
+        const dropZones = document.querySelectorAll('.drop-zone');
+        
+        dragItems.forEach(item => {
+            item.addEventListener('dragstart', () => {
+                item.classList.add('dragging');
+            });
+            
+            item.addEventListener('dragend', () => {
+                item.classList.remove('dragging');
+            });
+        });
+        
+        dropZones.forEach(zone => {
+            zone.addEventListener('dragover', e => {
+                e.preventDefault();
+                zone.classList.add('highlight');
+            });
+            
+            zone.addEventListener('dragleave', () => {
+                zone.classList.remove('highlight');
+            });
+            
+            zone.addEventListener('drop', e => {
+                e.preventDefault();
+                zone.classList.remove('highlight');
+                
+                const draggingItem = document.querySelector('.dragging');
+                if (draggingItem) {
+                    const target = draggingItem.getAttribute('data-target');
+                    if (zone.id === target || zone.id === 'stepOrderDropZone') {
+                        zone.appendChild(draggingItem);
+                    }
+                }
+            });
+        });
+        
+        // Engine performance calculator
+        document.getElementById('calculateBtn').addEventListener('click', () => {
+            const bore = parseFloat(document.getElementById('bore').value);
+            const stroke = parseFloat(document.getElementById('stroke').value);
+            const cylinders = parseInt(document.getElementById('cylinders').value);
+            const clearanceVolume = parseFloat(document.getElementById('clearanceVolume').value);
+            
+            // Calculate single cylinder capacity in cc
+            const radius = bore / 2;
+            const singleCylinderCapacity = Math.PI * Math.pow(radius, 2) * stroke / 1000;
+            
+            // Calculate total engine capacity
+            const totalCapacity = singleCylinderCapacity * cylinders;
+            
+            // Calculate compression ratio
+            const sweepVolume = singleCylinderCapacity;
+            const compressionRatio = (sweepVolume + clearanceVolume) / clearanceVolume;
+            
+            // Display results
+            document.getElementById('singleCylinderCapacity').textContent = singleCylinderCapacity.toFixed(2);
+            document.getElementById('totalCapacity').textContent = totalCapacity.toFixed(2);
+            document.getElementById('compressionRatio').textContent = compressionRatio.toFixed(1);
+        });
+        
+        // Oil matching activity
+        document.getElementById('checkOilMatchBtn').addEventListener('click', () => {
+            const selects = document.querySelectorAll('.oil-match');
+            let correct = 0;
+            
+            selects.forEach(select => {
+                const correctAnswer = select.getAttribute('data-correct');
+                if (select.value === correctAnswer) {
+                    correct++;
+                    select.style.borderColor = 'green';
+                } else {
+                    select.style.borderColor = 'red';
+                }
+            });
+            
+            const feedback = document.getElementById('oilMatchFeedback');
+            if (correct === selects.length) {
+                feedback.textContent = 'Great job! All answers are correct.';
+                feedback.className = 'feedback success';
+            } else {
+                feedback.textContent = `You got ${correct} out of ${selects.length} correct. Try again!`;
+                feedback.className = 'feedback error';
+            }
+        });
+        
+        // Cooling quiz
+        document.getElementById('checkCoolingQuizBtn').addEventListener('click', () => {
+            const options = document.querySelectorAll('#cooling .question .option');
+            let score = 0;
+            
+            options.forEach(option => {
+                option.classList.remove('selected', 'correct', 'wrong');
+                option.removeEventListener('click', selectOption);
+                option.addEventListener('click', selectOption);
+            });
+            
+            function selectOption() {
+                const questionOptions = this.parentElement.querySelectorAll('.option');
+                questionOptions.forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+            }
+            
+            const selectedOptions = document.querySelectorAll('#cooling .question .selected');
+            selectedOptions.forEach(option => {
+                if (option.hasAttribute('data-correct')) {
+                    score++;
+                    option.classList.add('correct');
+                } else {
+                    option.classList.add('wrong');
+                    // Find and highlight the correct option
+                    const correctOption = option.parentElement.querySelector('[data-correct]');
+                    correctOption.classList.add('correct');
+                }
+            });
+            
+            const feedback = document.getElementById('coolingQuizFeedback');
+            if (score === selectedOptions.length) {
+                feedback.textContent = 'Great job! All answers are correct.';
+                feedback.className = 'feedback success';
+            } else {
+                feedback.textContent = `You got ${score} out of ${selectedOptions.length} correct. Try again!`;
+                feedback.className = 'feedback error';
+            }
+        });
+        
+        // Cooling component drag and drop
+        document.getElementById('checkCoolingComponentsBtn').addEventListener('click', () => {
+            const primaryZone = document.getElementById('primary');
+            const secondaryZone = document.getElementById('secondary');
+            const airflowZone = document.getElementById('airflow');
+            
+            let correct = 0;
+            const totalItems = document.querySelectorAll('#coolingComponents .drag-item').length;
+            
+            primaryZone.querySelectorAll('.drag-item').forEach(item => {
+                if (item.getAttribute('data-target') === 'primary') {
+                    correct++;
+                    item.style.backgroundColor = 'var(--success)';
+                } else {
+                    item.style.backgroundColor = 'var(--danger)';
+                }
+            });
+            
+            secondaryZone.querySelectorAll('.drag-item').forEach(item => {
+                if (item.getAttribute('data-target') === 'secondary') {
+                    correct++;
+                    item.style.backgroundColor = 'var(--success)';
+                } else {
+                    item.style.backgroundColor = 'var(--danger)';
+                }
+            });
+            
+            airflowZone.querySelectorAll('.drag-item').forEach(item => {
+                if (item.getAttribute('data-target') === 'airflow') {
+                    correct++;
+                    item.style.backgroundColor = 'var(--success)';
+                } else {
+                    item.style.backgroundColor = 'var(--danger)';
+                }
+            });
+            
+            const feedback = document.getElementById('coolingComponentsFeedback');
+            if (correct === totalItems) {
+                feedback.textContent = 'Great job! All components are in the correct zones.';
+                feedback.className = 'feedback success';
+            } else {
+                feedback.textContent = `You got ${correct} out of ${totalItems} correct. Try again!`;
+                feedback.className = 'feedback error';
+            }
+        });
+        
+        // Cooling test matching
+        document.getElementById('checkCoolingTestBtn').addEventListener('click', () => {
+            const selects = document.querySelectorAll('.cooling-test-match');
+            let correct = 0;
+            
+            selects.forEach(select => {
+                const correctAnswer = select.getAttribute('data-correct');
+                if (select.value === correctAnswer) {
+                    correct++;
+                    select.style.borderColor = 'green';
+                } else {
+                    select.style.borderColor = 'red';
+                }
+            });
+            
+            const feedback = document.getElementById('coolingTestFeedback');
+            if (correct === selects.length) {
+                feedback.textContent = 'Great job! All answers are correct.';
+                feedback.className = 'feedback success';
+            } else {
+                feedback.textContent = `You got ${correct} out of ${selects.length} correct. Try again!`;
+                feedback.className = 'feedback error';
+            }
+        });
+        
+        // Diagnostic game
+        document.getElementById('checkDiagnosticBtn').addEventListener('click', () => {
+            const diagnosticOptions = document.querySelectorAll('.diagnostic-option');
+            let score = 0;
+            
+            diagnosticOptions.forEach(option => {
+                option.classList.remove('selected', 'correct', 'wrong');
+                option.removeEventListener('click', selectDiagnostic);
+                option.addEventListener('click', selectDiagnostic);
+            });
+            
+            function selectDiagnostic() {
+                const problemOptions = this.parentElement.querySelectorAll('.diagnostic-option');
+                problemOptions.forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+            }
+            
+            const selectedDiagnostics = document.querySelectorAll('.diagnostic-option.selected');
+            selectedDiagnostics.forEach(option => {
+                if (option.hasAttribute('data-correct')) {
+                    score++;
+                    option.style.backgroundColor = 'var(--success)';
+                } else {
+                    option.style.backgroundColor = 'var(--danger)';
+                    // Find and highlight the correct option
+                    const correctOption = option.parentElement.querySelector('[data-correct]');
+                    correctOption.style.backgroundColor = 'var(--success)';
+                }
+            });
+            
+            const feedback = document.getElementById('diagnosticFeedback');
+            if (score === selectedDiagnostics.length) {
+                feedback.textContent = 'Great job! All diagnoses are correct.';
+                feedback.className = 'feedback success';
+            } else {
+                feedback.textContent = `You got ${score} out of ${selectedDiagnostics.length} correct. Try again!`;
+                feedback.className = 'feedback error';
+            }
+        });
+        
+        // Order steps
+        document.getElementById('checkOrderBtn').addEventListener('click', () => {
+            const dropZone = document.getElementById('stepOrderDropZone');
+            const steps = dropZone.querySelectorAll('.drag-item');
+            
+            let correct = 0;
+            let currentOrder = 1;
+            
+            steps.forEach(step => {
+                const correctOrder = parseInt(step.getAttribute('data-order'));
+                if (correctOrder === currentOrder) {
+                    correct++;
+                    step.style.backgroundColor = 'var(--success)';
+                } else {
+                    step.style.backgroundColor = 'var(--danger)';
+                }
+                currentOrder++;
+            });
+            
+            const feedback = document.getElementById('orderFeedback');
+            if (correct === steps.length) {
+                feedback.textContent = 'Great job! The steps are in the correct order.';
+                feedback.className = 'feedback success';
+            } else {
+                feedback.textContent = `You got ${correct} out of ${steps.length} correct. Try again!`;
+                feedback.className = 'feedback error';
+            }
+        });
+        
+        // Testing match
+        document.getElementById('checkTestingMatchBtn').addEventListener('click', () => {
+            const selects = document.querySelectorAll('.testing-match');
+            let correct = 0;
+            
+            selects.forEach(select => {
+                const correctAnswer = select.getAttribute('data-correct');
+                if (select.value === correctAnswer) {
+                    correct++;
+                    select.style.borderColor = 'green';
+                } else {
+                    select.style.borderColor = 'red';
+                }
+            });
+            
+            const feedback = document.getElementById('testingMatchFeedback');
+            if (correct === selects.length) {
+                feedback.textContent = 'Great job! All answers are correct.';
+                feedback.className = 'feedback success';
+            } else {
+                feedback.textContent = `You got ${correct} out of ${selects.length} correct. Try again!`;
+                feedback.className = 'feedback error';
+            }
+        });
+        
+        // Final quiz
+        document.getElementById('submitFinalQuizBtn').addEventListener('click', () => {
+            const options = document.querySelectorAll('#finalQuiz .option');
+            let score = 0;
+            const totalQuestions = document.querySelectorAll('#finalQuiz .question').length;
+            
+            // Reset all options
+            options.forEach(option => {
+                option.classList.remove('selected', 'correct', 'wrong');
+            });
+            
+            // Check each selected option
+            const selectedOptions = document.querySelectorAll('#finalQuiz .option.selected');
+            selectedOptions.forEach(option => {
+                if (option.hasAttribute('data-correct')) {
+                    score++;
+                    option.classList.add('correct');
+                } else {
+                    option.classList.add('wrong');
+                    // Find and highlight the correct option
+                    const correctOption = option.parentElement.querySelector('[data-correct]');
+                    correctOption.classList.add('correct');
+                }
+            });
+            
+            // Calculate percentage
+            const percentage = Math.round((score / totalQuestions) * 100);
+            
+            // Update feedback
+            const feedback = document.getElementById('finalQuizFeedback');
+            const scoreDisplay = document.getElementById('finalScore');
+            
+            if (percentage >= 70) {
+                feedback.textContent = 'Congratulations! You passed the assessment.';
+                feedback.className = 'feedback success';
+                progress.assessment = true;
+                progress.finalScore = percentage;
+                updateProgress();
+                
+                // Show certificate
+                const certificate = document.getElementById('certificate');
+                certificate.style.display = 'block';
+                document.getElementById('studentName').textContent = 'Your Name'; // This would be replaced with actual student name
+                document.getElementById('certificateScore').textContent = percentage + '%';
+                
+                const today = new Date();
+                document.getElementById('certificateDate').textContent = today.toLocaleDateString();
+            } else {
+                feedback.textContent = 'You need at least 70% to pass. Please try again.';
+                feedback.className = 'feedback error';
+            }
+            
+            scoreDisplay.textContent = `Your score: ${score} out of ${totalQuestions} (${percentage}%)`;
+        });
+        
+        // Final quiz option selection
+        document.querySelectorAll('#finalQuiz .option').forEach(option => {
+            option.addEventListener('click', function() {
+                // Deselect all options in this question
+                const questionOptions = this.parentElement.querySelectorAll('.option');
+                questionOptions.forEach(opt => opt.classList.remove('selected'));
+                
+                // Select this option
+                this.classList.add('selected');
+            });
+        });
+        
+        // Print certificate
+        document.getElementById('printCertificateBtn').addEventListener('click', () => {
+            window.print();
+        });
+        
+        // Initialize four-stroke animation controls
+        document.querySelectorAll('.stroke-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const stroke = this.getAttribute('data-stroke');
+                
+                // Remove active class from all stroke buttons
+                document.querySelectorAll('.stroke-btn').forEach(b => b.classList.remove('active'));
+                
+                // Add active class to this button
+                this.classList.add('active');
+                
+                // Update stroke info
+                const strokeInfo = document.getElementById('strokeInfo');
+                
+                if (stroke === 'intake') {
+                    strokeInfo.innerHTML = `
+                        <h3>Intake Stroke</h3>
+                        <p>The piston moves downward in the cylinder, creating a vacuum. The intake valve opens, allowing the air-fuel mixture to be drawn into the cylinder.</p>
+                    `;
+                    // Here we would also update the animation
+                } else if (stroke === 'compression') {
+                    strokeInfo.innerHTML = `
+                        <h3>Compression Stroke</h3>
+                        <p>The piston moves upward with both valves closed, compressing the air-fuel mixture. This increases the pressure and temperature of the mixture for more efficient combustion.</p>
+                    `;
+                    // Update animation
+                } else if (stroke === 'power') {
+                    strokeInfo.innerHTML = `
+                        <h3>Power Stroke</h3>
+                        <p>The compressed air-fuel mixture is ignited by the spark plug. The resulting explosion forces the piston downward, generating power that is transmitted to the crankshaft.</p>
+                    `;
+                    // Update animation
+                } else if (stroke === 'exhaust') {
+                    strokeInfo.innerHTML = `
+                        <h3>Exhaust Stroke</h3>
+                        <p>The piston moves upward again, with the exhaust valve open. This pushes the spent combustion gases out of the cylinder, preparing it for the next intake stroke.</p>
+                    `;
+                    // Update animation
+                } else if (stroke === 'play') {
+                    // Play full animation cycle
+                    animateFourStrokeCycle();
+                }
+            });
+        });
+        
+        function animateFourStrokeCycle() {
+            // This function would animate through all four strokes in sequence
+            const strokes = ['intake', 'compression', 'power', 'exhaust'];
+            let currentStroke = 0;
+            
+            function animateNextStroke() {
+                if (currentStroke >= strokes.length) {
+                    currentStroke = 0;
+                }
+                
+                // Trigger click on the appropriate stroke button
+                document.querySelector(`.stroke-btn[data-stroke="${strokes[currentStroke]}"]`).click();
+                
+                currentStroke++;
+                
+                // Continue animation
+                setTimeout(animateNextStroke, 2000);
+            }
+            
+            // Start animation
+            animateNextStroke();
+        }
+        
+        // Initialize engine components quiz
+        document.getElementById('checkEngineComponentsBtn').addEventListener('click', () => {
+            const valvetrainZone = document.getElementById('valvetrain');
+            const bottomEndZone = document.getElementById('bottom-end');
+            const cylinderZone = document.getElementById('cylinder');
+            
+            let correct = 0;
+            const totalItems = document.querySelectorAll('#engineComponents .drag-item').length;
+            
+            valvetrainZone.querySelectorAll('.drag-item').forEach(item => {
+                if (item.getAttribute('data-target') === 'valvetrain') {
+                    correct++;
+                    item.style.backgroundColor = 'var(--success)';
+                } else {
+                    item.style.backgroundColor = 'var(--danger)';
+                }
+            });
+            
+            bottomEndZone.querySelectorAll('.drag-item').forEach(item => {
+                if (item.getAttribute('data-target') === 'bottom-end') {
+                    correct++;
+                    item.style.backgroundColor = 'var(--success)';
+                } else {
+                    item.style.backgroundColor = 'var(--danger)';
+                }
+            });
+            
+            cylinderZone.querySelectorAll('.drag-item').forEach(item => {
+                if (item.getAttribute('data-target') === 'cylinder') {
+                    correct++;
+                    item.style.backgroundColor = 'var(--success)';
+                } else {
+                    item.style.backgroundColor = 'var(--danger)';
+                }
+            });
+            
+            const feedback = document.getElementById('engineComponentsFeedback');
+            if (correct === totalItems) {
+                feedback.textContent = 'Great job! All components are in the correct zones.';
+                feedback.className = 'feedback success';
+            } else {
+                feedback.textContent = `You got ${correct} out of ${totalItems} correct. Try again!`;
+                feedback.className = 'feedback error';
+            }
+        });
+        
+        // Initialize lube quiz
+        document.querySelectorAll('#lubrication .question .option').forEach(option => {
+            option.addEventListener('click', function() {
+                // Deselect all options in this question
+                const questionOptions = this.parentElement.querySelectorAll('.option');
+                questionOptions.forEach(opt => opt.classList.remove('selected'));
+                
+                // Select this option
+                this.classList.add('selected');
+            });
+        });
+        
+        document.getElementById('checkLubeQuizBtn').addEventListener('click', () => {
+            const selectedOptions = document.querySelectorAll('#lubrication .question .option.selected');
+            let score = 0;
+            
+            selectedOptions.forEach(option => {
+                if (option.hasAttribute('data-correct')) {
+                    score++;
+                    option.classList.add('correct');
+                } else {
+                    option.classList.add('wrong');
+                    // Find and highlight the correct option
+                    const correctOption = option.parentElement.querySelector('[data-correct]');
+                    correctOption.classList.add('correct');
+                }
+            });
+            
+            const feedback = document.getElementById('lubeQuizFeedback');
+            const totalQuestions = document.querySelectorAll('#lubrication .question').length;
+            
+            if (score === selectedOptions.length && selectedOptions.length === totalQuestions) {
+                feedback.textContent = 'Great job! All answers are correct.';
+                feedback.className = 'feedback success';
+            } else {
+                feedback.textContent = `You got ${score} out of ${totalQuestions} correct. Try again!`;
+                feedback.className = 'feedback error';
+            }
+        });
+        
+        // Create animations
+        
+        // Four-stroke engine animation setup
+        function setupFourStrokeAnimation() {
+            const container = document.getElementById('strokeAnimation');
+            
+            // Create animation elements
+            container.innerHTML = `
+                <div class="engine-animation">
+                    <div class="cylinder">
+                        <div class="cylinder-head"></div>
+                        <div class="intake-port"></div>
+                        <div class="exhaust-port"></div>
+                        <div class="valve intake-valve"></div>
+                        <div class="valve exhaust-valve"></div>
+                        <div class="spark-plug"></div>
+                        <div class="spark"></div>
+                        <div class="combustion-chamber">
+                            <div class="mixture"></div>
+                            <div class="combustion"></div>
+                            <div class="exhaust-gas"></div>
+                        </div>
+                        <div class="piston" style="top: 150px;">
+                            <div class="piston-rings"></div>
+                        </div>
+                        <div class="connecting-rod"></div>
+                        <div class="crank-arm"></div>
+                        <div class="crankshaft"></div>
+                        <div class="crankshaft-journal"></div>
+                        <div class="flywheel"></div>
+                    </div>
+                    <div class="status-indicator">
+                        <div>Stroke: <span class="current-stroke">Intake</span></div>
+                        <div>Crank Angle: <span class="crank-angle">0°</span></div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Initialize four-stroke animation
+        setupFourStrokeAnimation();
+        
+        // Lubrication system animation setup
+        function setupLubeAnimation() {
+            const container = document.getElementById('lubeAnimation');
+            
+            // Create animation elements for wet sump system (default)
+            container.innerHTML = `
+                <div class="system-type">Wet Sump System</div>
+                <div class="engine-block"></div>
+                
+                <div class="bearing" style="top: 100px; left: 130px;"></div>
+                <div class="bearing-label" style="top: 90px; left: 115px;">Main Bearing</div>
+                
+                <div class="bearing" style="top: 140px; left: 190px;"></div>
+                <div class="bearing-label" style="top: 130px; left: 175px;">Rod Bearing</div>
+                
+                <div class="oil-pump"></div>
+                <div class="oil-pump-label">Oil Pump</div>
+                
+                <div class="oil-filter"></div>
+                <div class="oil-filter-label">Filter</div>
+                
+                <div class="pressure-relief-valve"></div>
+                <div class="prv-label">Pressure Relief Valve</div>
+                
+                <div class="oil-pan"></div>
+                <div class="oil-pan-label">Oil Pan</div>
+                <div class="oil-level"></div>
+                
+                <div class="dry-sump-tank"></div>
+                <div class="tank-label">Oil Tank</div>
+                
+                <div class="scavenge-pump"></div>
+                <div class="scavenge-label">Scavenge Pump</div>
+                
+                <!-- Main oil path -->
+                <div class="oil-path" style="width: 5px; height: 60px; bottom: 50px; left: 65px;"></div>
+                <div class="oil-path" style="width: 40px; height: 5px; bottom: 110px; left: 65px;"></div>
+                <div class="oil-path" style="width: 5px; height: 30px; bottom: 110px; left: 60px;"></div>
+                
+                <!-- From filter to main gallery -->
+                <div class="oil-path" style="width: 5px; height: 20px; top: 100px; left: 60px;"></div>
+                <div class="oil-path" style="width: 75px; height: 5px; top: 100px; left: 60px;"></div>
+                
+                <!-- Main oil gallery -->
+                <div class="oil-gallery" style="width: 10px; height: 50px; top: 100px; left: 135px;"></div>
+                
+                <!-- To rod bearing -->
+                <div class="oil-path" style="width: 60px; height: 5px; top: 145px; left: 140px;"></div>
+                
+                <!-- Return path -->
+                <div class="oil-path" style="width: 5px; height: 30px; top: 150px; left: 195px;"></div>
+                <div class="oil-path" style="width: 200px; height: 5px; top: 180px; left: 5px;"></div>
+                
+                <!-- To pressure relief valve -->
+                <div class="oil-path" style="width: 5px; height: 25px; top: 100px; left: 115px;"></div>
+                <div class="oil-path" style="width: 5px; height: 25px; top: 75px; left: 115px;"></div>
+                <div class="oil-path" style="width: 5px; height: 80px; top: 85px; left: 120px;"></div>
+            `;
+        }
+        
+        // Initialize lubrication animation
+        setupLubeAnimation();
+        
+        // Cooling system animation setup
+        function setupCoolingAnimation() {
+            const container = document.getElementById('coolingAnimation');
+            
+            // Create animation elements
+            container.innerHTML = `
+                <div class="engine-block-cooling"></div>
+                <div class="water-jacket"></div>
+                
+                <div class="radiator"></div>
+                <div class="radiator-label">Radiator</div>
+                <div class="radiator-fins"></div>
+                
+                <div class="water-pump"></div>
+                <div class="water-pump-label">Water Pump</div>
+                <div class="pump-impeller">
+                    <div class="impeller-blade" style="top: 12px; left: 0; transform: rotate(0deg);"></div>
+                    <div class="impeller-blade" style="top: 12px; left: 15px; transform: rotate(90deg);"></div>
+                    <div class="impeller-blade" style="top: 0; left: 12px; transform: rotate(180deg);"></div>
+                    <div class="impeller-blade" style="top: 25px; left: 12px; transform: rotate(270deg);"></div>
+                </div>
+                
+                <div class="thermostat"></div>
+                <div class="thermostat-label">Thermostat</div>
+                <div class="thermostat-valve"></div>
+                
+                <div class="expansion-tank"></div>
+                <div class="expansion-label">Expansion Tank</div>
+                <div class="coolant-level"></div>
+                <div class="radiator-cap"></div>
+                
+                <div class="fan">
+                    <div class="fan-blade" style="top: 26px; left: 10px; transform: rotate(0deg);"></div>
+                    <div class="fan-blade" style="top: 26px; left: 10px; transform: rotate(45deg);"></div>
+                    <div class="fan-blade" style="top: 26px; left: 10px; transform: rotate(90deg);"></div>
+                    <div class="fan-blade" style="top: 26px; left: 10px; transform: rotate(135deg);"></div>
+                    <div class="fan-blade" style="top: 26px; left: 10px; transform: rotate(180deg);"></div>
+                    <div class="fan-blade" style="top: 26px; left: 10px; transform: rotate(225deg);"></div>
+                    <div class="fan-blade" style="top: 26px; left: 10px; transform: rotate(270deg);"></div>
+                    <div class="fan-blade" style="top: 26px; left: 10px; transform: rotate(315deg);"></div>
+                </div>
+                
+                <div class="temperature-gauge"></div>
+                <div class="gauge-needle"></div>
+                <div class="temp-indicator">Normal</div>
+                
+                <!-- Cooling paths -->
+                <!-- Hot coolant from engine to radiator -->
+                <div class="cooling-path hot" style="width: 5px; height: 40px; top: 100px; left: 150px;"></div>
+                <div class="cooling-path hot" style="width: 60px; height: 5px; top: 100px; left: 95px;"></div>
+                <div class="cooling-path hot" style="width: 5px; height: 40px; top: 60px; left: 95px;"></div>
+                
+                <!-- Coolant through radiator -->
+                <div class="cooling-path warm" style="width: 5px; height: 100px; top: 30px; left: 95px;"></div>
+                <div class="cooling-path cool" style="width: 5px; height: 100px; top: 30px; left: 65px;"></div>
+                
+                <!-- Cool coolant back to engine -->
+                <div class="cooling-path cool" style="width: 5px; height: 40px; top: 130px; left: 65px;"></div>
+                <div class="cooling-path cool" style="width: 25px; height: 5px; top: 170px; left: 65px;"></div>
+                
+                <!-- Through water pump -->
+                <div class="cooling-path cool" style="width: 5px; height: 25px; top: 170px; left: 65px;"></div>
+                <div class="cooling-path cool" style="width: 90px; height: 5px; top: 170px; left: 65px;"></div>
+                
+                <!-- Into engine block -->
+                <div class="cooling-path cool" style="width: 5px; height: 30px; top: 145px; left: 155px;"></div>
+                
+                <!-- Bypass when thermostat closed -->
+                <div class="cooling-path warm" style="width: 30px; height: 5px; top: 100px; left: 155px;"></div>
+                <div class="cooling-path warm" style="width: 5px; height: 45px; top: 100px; left: 185px;"></div>
+                <div class="cooling-path warm" style="width: 30px; height: 5px; top: 145px; left: 155px;"></div>
+                
+                <!-- To expansion tank -->
+                <div class="cooling-path warm" style="width: 60px; height: 5px; top: 60px; left: 150px;"></div>
+                <div class="cooling-path warm" style="width: 5px; height: 20px; top: 60px; left: 210px;"></div>
+            `;
+        }
+        
+        // Initialize cooling animation
+        setupCoolingAnimation();
+        
+        // Lubrication animation controls
+        document.getElementById('startLubeAnimation').addEventListener('click', () => {
+            startLubeAnimation();
+        });
+        
+        document.getElementById('pauseLubeAnimation').addEventListener('click', () => {
+            pauseLubeAnimation();
+        });
+        
+        document.getElementById('resetLubeAnimation').addEventListener('click', () => {
+            resetLubeAnimation();
+        });
+        
+        let lubeAnimationRunning = false;
+        let lubeAnimationInterval;
+        
+        function startLubeAnimation() {
+            if (lubeAnimationRunning) return;
+            
+            lubeAnimationRunning = true;
+            const oilPaths = document.querySelectorAll('.oil-path');
+            const oilGallery = document.querySelector('.oil-gallery');
+            
+            // Reset animation
+            resetLubeAnimation();
+            
+            // Start animation sequence
+            let index = 0;
+            let step = 0;
+            
+            lubeAnimationInterval = setInterval(() => {
+                switch(step) {
+                    case 0: // Oil pump draws oil from pan
+                        if (index < 3) {
+                            oilPaths[index].style.opacity = '1';
+                            oilPaths[index].classList.add('flowing');
+                            index++;
+                        } else {
+                            step++;
+                            index = 3;
+                        }
+                        break;
+                    case 1: // Oil flows through filter to main gallery
+                        if (index < 5) {
+                            oilPaths[index].style.opacity = '1';
+                            oilPaths[index].classList.add('flowing');
+                            oilPaths[index].classList.add('pressurized');
+                            index++;
+                        } else {
+                            step++;
+                            oilGallery.style.opacity = '1';
+                        }
+                        break;
+                    case 2: // Oil flows to bearings
+                        if (index < 7) {
+                            oilPaths[index].style.opacity = '1';
+                            oilPaths[index].classList.add('flowing');
+                            oilPaths[index].classList.add('pressurized');
+                            index++;
+                        } else {
+                            step++;
+                        }
+                        break;
+                    case 3: // Oil returns to pan
+                        if (index < 9) {
+                            oilPaths[index].style.opacity = '1';
+                            oilPaths[index].classList.add('flowing');
+                            index++;
+                        } else {
+                            step++;
+                        }
+                        break;
+                    case 4: // Pressure relief valve path
+                        if (index < 12) {
+                            oilPaths[index].style.opacity = '1';
+                            oilPaths[index].classList.add('flowing');
+                            index++;
+                        } else {
+                            clearInterval(lubeAnimationInterval);
+                        }
+                        break;
+                }
+            }, 400);
+        }
+        
+        function pauseLubeAnimation() {
+            if (lubeAnimationInterval) {
+                clearInterval(lubeAnimationInterval);
+                lubeAnimationRunning = false;
+            }
+        }
+        
+        function resetLubeAnimation() {
+            if (lubeAnimationInterval) {
+                clearInterval(lubeAnimationInterval);
+            }
+            
+            lubeAnimationRunning = false;
+            
+            const oilPaths = document.querySelectorAll('.oil-path');
+            const oilGallery = document.querySelector('.oil-gallery');
+            
+            oilPaths.forEach(path => {
+                path.style.opacity = '0';
+                path.classList.remove('flowing');
+                path.classList.remove('pressurized');
+            });
+            
+            oilGallery.style.opacity = '0';
+        }
+        
+        // Toggle between wet sump and dry sump
+        function toggleSumpSystem() {
+            const systemType = document.querySelector('.system-type');
+            const oilPan = document.querySelector('.oil-pan');
+            const oilLevel = document.querySelector('.oil-level');
+            const drySumpTank = document.querySelector('.dry-sump-tank');
+            const scavengePump = document.querySelector('.scavenge-pump');
+            const tankLabel = document.querySelector('.tank-label');
+            const scavengeLabel = document.querySelector('.scavenge-label');
+            
+            if (systemType.textContent === 'Wet Sump System') {
+                // Switch to dry sump
+                systemType.textContent = 'Dry Sump System';
+                oilPan.style.height = '15px';
+                oilLevel.style.height = '5px';
+                drySumpTank.style.display = 'block';
+                scavengePump.style.display = 'block';
+                tankLabel.style.display = 'block';
+                scavengeLabel.style.display = 'block';
+                
+                // Add scavenge pump oil path
+                const container = document.getElementById('lubeAnimation');
+                const scavengePath1 = document.createElement('div');
+                scavengePath1.className = 'oil-path';
+                scavengePath1.style.width = '60px';
+                scavengePath1.style.height = '5px';
+                scavengePath1.style.bottom = '50px';
+                scavengePath1.style.right = '120px';
+                container.appendChild(scavengePath1);
+                
+                const scavengePath2 = document.createElement('div');
+                scavengePath2.className = 'oil-path';
+                scavengePath2.style.width = '5px';
+                scavengePath2.style.height = '30px';
+                scavengePath2.style.bottom = '50px';
+                scavengePath2.style.right = '65px';
+                container.appendChild(scavengePath2);
+            } else {
+                // Switch to wet sump
+                systemType.textContent = 'Wet Sump System';
+                oilPan.style.height = '30px';
+                oilLevel.style.height = '15px';
+                drySumpTank.style.display = 'none';
+                scavengePump.style.display = 'none';
+                tankLabel.style.display = 'none';
+                scavengeLabel.style.display = 'none';
+                
+                // Remove scavenge pump oil paths
+                const extraPaths = document.querySelectorAll('.oil-path:nth-last-child(-n+2)');
+                extraPaths.forEach(path => path.remove());
+            }
+            
+            // Reset animation
+            resetLubeAnimation();
+        }
+        
+        // Add button to toggle sump system
+        const lubeControls = document.getElementById('startLubeAnimation').parentElement;
+        const toggleSumpBtn = document.createElement('button');
+        toggleSumpBtn.className = 'btn';
+        toggleSumpBtn.id = 'toggleSumpBtn';
+        toggleSumpBtn.textContent = 'Switch Sump Type';
+        toggleSumpBtn.addEventListener('click', toggleSumpSystem);
+        lubeControls.appendChild(toggleSumpBtn);
+        
+        // Cooling animation controls
+        document.getElementById('startCoolingAnimation').addEventListener('click', () => {
+            startCoolingAnimation();
+        });
+        
+        document.getElementById('pauseCoolingAnimation').addEventListener('click', () => {
+            pauseCoolingAnimation();
+        });
+        
+        document.getElementById('resetCoolingAnimation').addEventListener('click', () => {
+            resetCoolingAnimation();
+        });
+        
+        let coolingAnimationRunning = false;
+        let coolingAnimationInterval;
+        let thermostatOpen = false;
+        
+        function startCoolingAnimation() {
+            if (coolingAnimationRunning) return;
+            
+            coolingAnimationRunning = true;
+            const coolingPaths = document.querySelectorAll('.cooling-path');
+            const fanBlades = document.querySelectorAll('.fan-blade');
+            const impellerBlades = document.querySelectorAll('.impeller-blade');
+            const thermostat = document.querySelector('.thermostat');
+            const thermostatValve = document.querySelector('.thermostat-valve');
+            const gaugeNeedle = document.querySelector('.gauge-needle');
+            const tempIndicator = document.querySelector('.temp-indicator');
+            
+            // Reset animation
+            resetCoolingAnimation();
+            
+            // Start animation sequence
+            let index = 0;
+            let step = 0;
+            let engineTemp = 0;
+            let fanRotation = 0;
+            let pumpRotation = 0;
+            
+            // Rotate fan and pump continuously
+            const rotateInterval = setInterval(() => {
+                fanRotation += 10;
+                pumpRotation += 15;
+                
+                fanBlades.forEach((blade, i) => {
+                    blade.style.transform = `rotate(${fanRotation + (i * 45)}deg)`;
+                });
+                
+                impellerBlades.forEach((blade, i) => {
+                    blade.style.transform = `rotate(${pumpRotation + (i * 90)}deg)`;
+                });
+                
+                // Update gauge based on engine temperature
+                const needleRotation = -60 + (engineTemp * 120); // -60 to 60 degrees
+                gaugeNeedle.style.transform = `rotate(${needleRotation}deg)`;
+                
+                if (engineTemp < 0.25) {
+                    tempIndicator.textContent = 'Cold';
+                    tempIndicator.style.color = '#77adff';
+                } else if (engineTemp < 0.75) {
+                    tempIndicator.textContent = 'Normal';
+                    tempIndicator.style.color = '#333';
+                } else {
+                    tempIndicator.textContent = 'Hot';
+                    tempIndicator.style.color = '#c83232';
+                }
+                
+                // Open/close thermostat based on temperature
+                if (engineTemp > 0.5 && !thermostatOpen) {
+                    thermostatOpen = true;
+                    thermostat.style.backgroundColor = '#ff7777';
+                    thermostatValve.style.transform = 'rotate(-90deg)';
+                } else if (engineTemp < 0.4 && thermostatOpen) {
+                    thermostatOpen = false;
+                    thermostat.style.backgroundColor = '#c83232';
+                    thermostatValve.style.transform = 'rotate(0deg)';
+                }
+            }, 100);
+            
+            coolingAnimationInterval = setInterval(() => {
+                switch(step) {
+                    case 0: // Engine warming up, bypass flow
+                        if (index < 16) {
+                            if (index === 8) {
+                                engineTemp = 0.4; // Engine warming up
+                            }
+                            
+                            // Skip main radiator flow when thermostat closed
+                            if (index >= 3 && index <= 6 && !thermostatOpen) {
+                                index = 7;
+                            } else {
+                                coolingPaths[index].style.opacity = '1';
+                                coolingPaths[index].classList.add('flowing');
+                                index++;
+                            }
+                        } else {
+                            step++;
+                            // Start heating engine more
+                            engineTemp = 0.6;
+                            setTimeout(() => {
+                                // Once thermostat opens, show flow through radiator
+                                if (index >= 3 && thermostatOpen) {
+                                    for (let i = 3; i <= 6; i++) {
+                                        coolingPaths[i].style.opacity = '1';
+                                        coolingPaths[i].classList.add('flowing');
+                                    }
+                                }
+                            }, 1000);
+                        }
+                        break;
+                    case 1: // Engine at normal temperature
+                        engineTemp = 0.65;
+                        // Keep animation running
+                        break;
+                }
+            }, 400);
+            
+            // Clean up on page exit
+            return () => {
+                clearInterval(coolingAnimationInterval);
+                clearInterval(rotateInterval);
+            };
+        }
+        
+        function pauseCoolingAnimation() {
+            if (coolingAnimationInterval) {
+                clearInterval(coolingAnimationInterval);
+                coolingAnimationRunning = false;
+            }
+        }
+        
+        function resetCoolingAnimation() {
+            if (coolingAnimationInterval) {
+                clearInterval(coolingAnimationInterval);
+            }
+            
+            coolingAnimationRunning = false;
+            thermostatOpen = false;
+            
+            const coolingPaths = document.querySelectorAll('.cooling-path');
+            const thermostat = document.querySelector('.thermostat');
+            const thermostatValve = document.querySelector('.thermostat-valve');
+            const gaugeNeedle = document.querySelector('.gauge-needle');
+            const tempIndicator = document.querySelector('.temp-indicator');
+            
+            coolingPaths.forEach(path => {
+                path.style.opacity = '0';
+                path.classList.remove('flowing');
+            });
+            
+            thermostat.style.backgroundColor = '#c83232';
+            thermostatValve.style.transform = 'rotate(0deg)';
+            gaugeNeedle.style.transform = 'rotate(-60deg)';
+            tempIndicator.textContent = 'Cold';
+            tempIndicator.style.color = '#77adff';
+        }
+        
+        // Four-stroke animation controls
+        const strokeBtns = document.querySelectorAll('.stroke-btn');
+        let animationRunning = false;
+        let animationInterval;
+        
+        strokeBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const stroke = this.getAttribute('data-stroke');
+                
+                // Remove active class from all stroke buttons
+                strokeBtns.forEach(b => b.classList.remove('active'));
+                
+                // Add active class to this button
+                this.classList.add('active');
+                
+                if (stroke === 'play') {
+                    if (!animationRunning) {
+                        animateFourStrokeCycle();
+                    }
+                } else {
+                    if (animationRunning) {
+                        clearInterval(animationInterval);
+                        animationRunning = false;
+                    }
+                    showStroke(stroke);
+                }
+            });
+        });
+        
+        function showStroke(stroke) {
+            const piston = document.querySelector('.piston');
+            const connectingRod = document.querySelector('.connecting-rod');
+            const crankArm = document.querySelector('.crank-arm');
+            const crankshaft = document.querySelector('.crankshaft');
+            const flywheel = document.querySelector('.flywheel');
+            const spark = document.querySelector('.spark');
+            const intakeValve = document.querySelector('.intake-valve');
+            const exhaustValve = document.querySelector('.exhaust-valve');
+            const mixture = document.querySelector('.mixture');
+            const combustion = document.querySelector('.combustion');
+            const exhaustGas = document.querySelector('.exhaust-gas');
+            const currentStrokeDisplay = document.querySelector('.current-stroke');
+            const crankAngleDisplay = document.querySelector('.crank-angle');
+            
+            // Reset all values
+            spark.style.opacity = '0';
+            mixture.style.height = '0';
+            combustion.style.opacity = '0';
+            exhaustGas.style.opacity = '0';
+            
+            if (stroke === 'intake') {
+                // Piston down, intake valve open
+                piston.style.top = '150px';
+                connectingRod.style.height = '140px';
+                connectingRod.style.transform = 'rotate(20deg)';
+                crankArm.style.transform = 'rotate(180deg)';
+                crankshaft.style.transform = 'rotate(180deg)';
+                flywheel.style.transform = 'rotate(180deg)';
+                
+                intakeValve.classList.add('valve-open');
+                exhaustValve.classList.remove('valve-open');
+                
+                mixture.style.height = '110px';
+                mixture.style.backgroundColor = 'rgba(200, 230, 255, 0.3)';
+                
+                currentStrokeDisplay.textContent = 'Intake';
+                crankAngleDisplay.textContent = '180°';
+                
+                // Update stroke info
+                const strokeInfo = document.getElementById('strokeInfo');
+                strokeInfo.innerHTML = `
+                    <h3>Intake Stroke</h3>
+                    <p>The piston moves downward in the cylinder, creating a vacuum. The intake valve opens, allowing the air-fuel mixture to be drawn into the cylinder.</p>
+                    <p><strong>Key Points:</strong></p>
+                    <ul>
+                        <li>Piston moves from TDC (Top Dead Center) to BDC (Bottom Dead Center)</li>
+                        <li>Intake valve is open</li>
+                        <li>Exhaust valve is closed</li>
+                        <li>Crankshaft rotates 180°</li>
+                        <li>Air-fuel mixture fills the cylinder</li>
+                    </ul>
+                `;
+            } else if (stroke === 'compression') {
+                // Piston up, both valves closed
+                piston.style.top = '50px';
+                connectingRod.style.height = '120px';
+                connectingRod.style.transform = 'rotate(160deg)';
+                crankArm.style.transform = 'rotate(0deg)';
+                crankshaft.style.transform = 'rotate(0deg)';
+                flywheel.style.transform = 'rotate(0deg)';
+                
+                intakeValve.classList.remove('valve-open');
+                exhaustValve.classList.remove('valve-open');
+                
+                mixture.style.height = '30px';
+                mixture.style.backgroundColor = 'rgba(200, 230, 255, 0.5)';
+                
+                currentStrokeDisplay.textContent = 'Compression';
+                crankAngleDisplay.textContent = '360°';
+                
+                // Update stroke info
+                const strokeInfo = document.getElementById('strokeInfo');
+                strokeInfo.innerHTML = `
+                    <h3>Compression Stroke</h3>
+                    <p>The piston moves upward with both valves closed, compressing the air-fuel mixture. This increases the pressure and temperature of the mixture for more efficient combustion.</p>
+                    <p><strong>Key Points:</strong></p>
+                    <ul>
+                        <li>Piston moves from BDC to TDC</li>
+                        <li>Both intake and exhaust valves are closed</li>
+                        <li>Crankshaft rotates from 180° to 360°</li>
+                        <li>Compression ratio determines how much the mixture is compressed</li>
+                        <li>Mixture temperature rises due to compression</li>
+                    </ul>
+                `;
+            } else if (stroke === 'power') {
+                // Piston down, both valves closed, spark/combustion
+                piston.style.top = '150px';
+                connectingRod.style.height = '140px';
+                connectingRod.style.transform = 'rotate(20deg)';
+                crankArm.style.transform = 'rotate(180deg)';
+                crankshaft.style.transform = 'rotate(180deg)';
+                flywheel.style.transform = 'rotate(180deg)';
+                
+                intakeValve.classList.remove('valve-open');
+                exhaustValve.classList.remove('valve-open');
+                
+                spark.style.opacity = '1';
+                combustion.style.opacity = '1';
+                combustion.style.height = '100px';
+                
+                currentStrokeDisplay.textContent = 'Power';
+                crankAngleDisplay.textContent = '540°';
+                
+                // Update stroke info
+                const strokeInfo = document.getElementById('strokeInfo');
+                strokeInfo.innerHTML = `
+                    <h3>Power Stroke</h3>
+                    <p>The compressed air-fuel mixture is ignited by the spark plug. The resulting explosion forces the piston downward, generating power that is transmitted to the crankshaft.</p>
+                    <p><strong>Key Points:</strong></p>
+                    <ul>
+                        <li>Piston moves from TDC to BDC</li>
+                        <li>Both valves remain closed</li>
+                        <li>Crankshaft rotates from 360° to 540°</li>
+                        <li>This is the only stroke that produces power</li>
+                        <li>Energy from combustion is converted to mechanical energy</li>
+                        <li>Peak cylinder pressure occurs just after TDC</li>
+                    </ul>
+                `;
+            } else if (stroke === 'exhaust') {
+                // Piston up, exhaust valve open
+                piston.style.top = '50px';
+                connectingRod.style.height = '120px';
+                connectingRod.style.transform = 'rotate(160deg)';
+                crankArm.style.transform = 'rotate(0deg)';
+                crankshaft.style.transform = 'rotate(0deg)';
+                flywheel.style.transform = 'rotate(0deg)';
+                
+                intakeValve.classList.remove('valve-open');
+                exhaustValve.classList.add('valve-open');
+                
+                exhaustGas.style.opacity = '1';
+                exhaustGas.style.height = '30px';
+                
+                currentStrokeDisplay.textContent = 'Exhaust';
+                crankAngleDisplay.textContent = '720°/0°';
+                
+                // Update stroke info
+                const strokeInfo = document.getElementById('strokeInfo');
+                strokeInfo.innerHTML = `
+                    <h3>Exhaust Stroke</h3>
+                    <p>The piston moves upward again, with the exhaust valve open. This pushes the spent combustion gases out of the cylinder, preparing it for the next intake stroke.</p>
+                    <p><strong>Key Points:</strong></p>
+                    <ul>
+                        <li>Piston moves from BDC to TDC</li>
+                        <li>Exhaust valve is open</li>
+                        <li>Intake valve is closed</li>
+                        <li>Crankshaft rotates from 540° to 720° (completing two full revolutions)</li>
+                        <li>Exhaust gases exit at high temperature</li>
+                        <li>At the end, the cycle repeats with the intake stroke</li>
+                    </ul>
+                `;
+            }
+        }
+        
+        function animateFourStrokeCycle() {
+            if (animationRunning) return;
+            
+            animationRunning = true;
+            const strokes = ['intake', 'compression', 'power', 'exhaust'];
+            let currentStrokeIndex = 0;
+            
+            // Start the animation cycle
+            showStroke(strokes[currentStrokeIndex]);
+            
+            animationInterval = setInterval(() => {
+                currentStrokeIndex = (currentStrokeIndex + 1) % strokes.length;
+                showStroke(strokes[currentStrokeIndex]);
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
