@@ -3187,11 +3187,11 @@
         
         let coolingAnimationRunning = false;
         let coolingAnimationInterval;
+        let coolingRotateInterval;
         let thermostatOpen = false;
         
         function startCoolingAnimation() {
             if (coolingAnimationRunning) return;
-            
             coolingAnimationRunning = true;
             const coolingPaths = document.querySelectorAll('.cooling-path');
             const fanBlades = document.querySelectorAll('.fan-blade');
@@ -3200,34 +3200,23 @@
             const thermostatValve = document.querySelector('.thermostat-valve');
             const gaugeNeedle = document.querySelector('.gauge-needle');
             const tempIndicator = document.querySelector('.temp-indicator');
-            
-            // Reset animation
             resetCoolingAnimation();
-            
-            // Start animation sequence
             let index = 0;
             let step = 0;
             let engineTemp = 0;
             let fanRotation = 0;
             let pumpRotation = 0;
-            
-            // Rotate fan and pump continuously
-            const rotateInterval = setInterval(() => {
+            coolingRotateInterval = setInterval(() => {
                 fanRotation += 10;
                 pumpRotation += 15;
-                
                 fanBlades.forEach((blade, i) => {
                     blade.style.transform = `rotate(${fanRotation + (i * 45)}deg)`;
                 });
-                
                 impellerBlades.forEach((blade, i) => {
                     blade.style.transform = `rotate(${pumpRotation + (i * 90)}deg)`;
                 });
-                
-                // Update gauge based on engine temperature
-                const needleRotation = -60 + (engineTemp * 120); // -60 to 60 degrees
+                const needleRotation = -60 + (engineTemp * 120);
                 gaugeNeedle.style.transform = `rotate(${needleRotation}deg)`;
-                
                 if (engineTemp < 0.25) {
                     tempIndicator.textContent = 'Cold';
                     tempIndicator.style.color = '#77adff';
@@ -3238,8 +3227,6 @@
                     tempIndicator.textContent = 'Hot';
                     tempIndicator.style.color = '#c83232';
                 }
-                
-                // Open/close thermostat based on temperature
                 if (engineTemp > 0.5 && !thermostatOpen) {
                     thermostatOpen = true;
                     thermostat.style.backgroundColor = '#ff7777';
@@ -3250,16 +3237,11 @@
                     thermostatValve.style.transform = 'rotate(0deg)';
                 }
             }, 100);
-            
             coolingAnimationInterval = setInterval(() => {
                 switch(step) {
-                    case 0: // Engine warming up, bypass flow
+                    case 0:
                         if (index < 16) {
-                            if (index === 8) {
-                                engineTemp = 0.4; // Engine warming up
-                            }
-                            
-                            // Skip main radiator flow when thermostat closed
+                            if (index === 8) engineTemp = 0.4;
                             if (index >= 3 && index <= 6 && !thermostatOpen) {
                                 index = 7;
                             } else {
@@ -3269,10 +3251,8 @@
                             }
                         } else {
                             step++;
-                            // Start heating engine more
                             engineTemp = 0.6;
                             setTimeout(() => {
-                                // Once thermostat opens, show flow through radiator
                                 if (index >= 3 && thermostatOpen) {
                                     for (let i = 3; i <= 6; i++) {
                                         coolingPaths[i].style.opacity = '1';
@@ -3282,46 +3262,33 @@
                             }, 1000);
                         }
                         break;
-                    case 1: // Engine at normal temperature
+                    case 1:
                         engineTemp = 0.65;
-                        // Keep animation running
                         break;
                 }
             }, 400);
-            
-            // Clean up on page exit
-            return () => {
-                clearInterval(coolingAnimationInterval);
-                clearInterval(rotateInterval);
-            };
         }
-        
+
         function pauseCoolingAnimation() {
-            if (coolingAnimationInterval) {
-                clearInterval(coolingAnimationInterval);
-                coolingAnimationRunning = false;
-            }
+            if (coolingAnimationInterval) clearInterval(coolingAnimationInterval);
+            if (coolingRotateInterval) clearInterval(coolingRotateInterval);
+            coolingAnimationRunning = false;
         }
-        
+
         function resetCoolingAnimation() {
-            if (coolingAnimationInterval) {
-                clearInterval(coolingAnimationInterval);
-            }
-            
+            if (coolingAnimationInterval) clearInterval(coolingAnimationInterval);
+            if (coolingRotateInterval) clearInterval(coolingRotateInterval);
             coolingAnimationRunning = false;
             thermostatOpen = false;
-            
             const coolingPaths = document.querySelectorAll('.cooling-path');
             const thermostat = document.querySelector('.thermostat');
             const thermostatValve = document.querySelector('.thermostat-valve');
             const gaugeNeedle = document.querySelector('.gauge-needle');
             const tempIndicator = document.querySelector('.temp-indicator');
-            
             coolingPaths.forEach(path => {
                 path.style.opacity = '0';
                 path.classList.remove('flowing');
             });
-            
             thermostat.style.backgroundColor = '#c83232';
             thermostatValve.style.transform = 'rotate(0deg)';
             gaugeNeedle.style.transform = 'rotate(-60deg)';
@@ -3330,34 +3297,9 @@
         }
         
         // Four-stroke animation controls
-        const strokeBtns = document.querySelectorAll('.stroke-btn');
         let animationRunning = false;
         let animationInterval;
-        
-        strokeBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                const stroke = this.getAttribute('data-stroke');
-                
-                // Remove active class from all stroke buttons
-                strokeBtns.forEach(b => b.classList.remove('active'));
-                
-                // Add active class to this button
-                this.classList.add('active');
-                
-                if (stroke === 'play') {
-                    if (!animationRunning) {
-                        animateFourStrokeCycle();
-                    }
-                } else {
-                    if (animationRunning) {
-                        clearInterval(animationInterval);
-                        animationRunning = false;
-                    }
-                    showStroke(stroke);
-                }
-            });
-        });
-        
+
         function showStroke(stroke) {
             const piston = document.querySelector('.piston');
             const connectingRod = document.querySelector('.connecting-rod');
@@ -3515,14 +3457,10 @@
         
         function animateFourStrokeCycle() {
             if (animationRunning) return;
-            
             animationRunning = true;
             const strokes = ['intake', 'compression', 'power', 'exhaust'];
             let currentStrokeIndex = 0;
-            
-            // Start the animation cycle
             showStroke(strokes[currentStrokeIndex]);
-            
             animationInterval = setInterval(() => {
                 currentStrokeIndex = (currentStrokeIndex + 1) % strokes.length;
                 showStroke(strokes[currentStrokeIndex]);
